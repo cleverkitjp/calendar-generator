@@ -56,6 +56,7 @@ function createSymbolButtons() {
   ];
 
   const area = document.getElementById("symbolButtons");
+  if (!area) return;
   area.innerHTML = "";
 
   symbols.forEach(char => {
@@ -311,7 +312,8 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
   // 最後の表示終了日（週末まで進める）
   const last = new Date(endDate);
   const nativeDowEnd = last.getDay();
-  const tailDays = weekStart === "sun" ? (6 - nativeDowEnd) : ((7 - ((nativeDowEnd + 6) % 7) - 1));
+  const offsetEnd = weekStart === "sun" ? nativeDowEnd : (nativeDowEnd + 6) % 7;
+  const tailDays = 6 - offsetEnd;
   last.setDate(last.getDate() + tailDays);
 
   let cur = new Date(first);
@@ -365,7 +367,6 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
     }
 
     grid.appendChild(cell);
-
     cur.setDate(cur.getDate() + 1);
   }
 

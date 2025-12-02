@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>期間カレンダー画像メーカー</title>
+  <title>カレンダー ジェネレーター</title>
 
   <link rel="stylesheet" href="style.css" />
 
-  <!-- html2canvas（SRIなしのシンプル読み込み） -->
+  <!-- html2canvas -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
 <body class="theme-cool">
   <div class="container">
 
-    <h1>期間カレンダー画像メーカー</h1>
+    <h1>カレンダー ジェネレーター</h1>
+    <p class="lead">
+      部活・習い事・推し活などの活動予定カレンダーを画像でつくって、LINEやInstagramなどで手軽に共有できます。
+    </p>
 
     <!-- 期間設定 -->
     <section class="card">
@@ -66,17 +69,20 @@
 
       <div class="symbol-row">
         <input class="symbol-char" id="sym4" maxlength="1" value="★" />
-        <input class="symbol-label" id="sym4label" placeholder="ラベル（例：試合）」" value="試合" />
+        <input class="symbol-label" id="sym4label" placeholder="ラベル（例：試合）" value="試合" />
       </div>
 
-      <!-- カレンダー生成ボタンをここに配置 -->
+      <h3 class="subheading">記号を選ぶ</h3>
+      <div id="symbolButtons"></div>
+
+      <!-- カレンダー生成ボタン（記号設定のあと） -->
       <button id="generateCalBtn">カレンダーを生成</button>
       <p class="hint">記号と期間を設定してから、カレンダーを生成してください。</p>
     </section>
 
     <!-- カレンダー＋凡例（ここを1枚画像にする） -->
     <section class="card">
-      <h2>編集</h2>
+      <h2>予定を入れる</h2>
       <div id="calendarImageArea">
         <div id="calendarArea"></div>
         <div id="legendArea"></div>

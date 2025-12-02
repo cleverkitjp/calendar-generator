@@ -19,9 +19,9 @@
       部活・習い事・推し活などの活動予定カレンダーを画像でつくって、LINEやInstagramなどで手軽に共有できます。
     </p>
 
-    <!-- 期間設定 -->
+    <!-- Step1 基本設定 -->
     <section class="card">
-      <h2>期間設定</h2>
+      <h2>Step1. 基本設定</h2>
 
       <label>開始日</label>
       <input id="startDate" type="date" />
@@ -48,9 +48,12 @@
       </select>
     </section>
 
-    <!-- 記号設定 -->
+    <!-- Step2 予定の種類と補足情報（記号設定） -->
     <section class="card">
-      <h2>記号設定（最大4つ）</h2>
+      <h2>Step2. 予定の種類と補足情報</h2>
+      <p class="hint">
+        使いたい記号と意味を設定します（例：● 通常練習 / ▲ 17時開始 / ✕ お休み / ★ 試合）。
+      </p>
 
       <div class="symbol-row">
         <input class="symbol-char" id="sym1" maxlength="1" value="●" />
@@ -71,27 +74,41 @@
         <input class="symbol-char" id="sym4" maxlength="1" value="★" />
         <input class="symbol-label" id="sym4label" placeholder="ラベル（例：試合）" value="試合" />
       </div>
+    </section>
+
+    <!-- Step3 カレンダー生成 -->
+    <section class="card">
+      <h2>Step3. カレンダー生成</h2>
+      <button id="generateCalBtn">カレンダーを生成</button>
+      <p class="hint">開始日・終了日と記号を設定してから、カレンダーを生成してください。</p>
+    </section>
+
+    <!-- Step4 予定を入れる -->
+    <section class="card">
+      <h2>Step4. 予定を入れる</h2>
 
       <h3 class="subheading">記号を選ぶ</h3>
       <div id="symbolButtons"></div>
+      <p class="hint">
+        上の記号から使いたいものを選んで、下のカレンダーの日付をタップすると予定を入れられます。<br>
+        1日に最大4つまで記号を入れられます（同じ記号はタップでON/OFF）。
+      </p>
 
-      <!-- カレンダー生成ボタン（記号設定のあと） -->
-      <button id="generateCalBtn">カレンダーを生成</button>
-      <p class="hint">記号と期間を設定してから、カレンダーを生成してください。</p>
-    </section>
-
-    <!-- カレンダー＋凡例（ここを1枚画像にする） -->
-    <section class="card">
-      <h2>予定を入れる</h2>
       <div id="calendarImageArea">
         <div id="calendarArea"></div>
         <div id="legendArea"></div>
+
+        <div class="memo-block">
+          <div class="memo-title">メモ</div>
+          <textarea id="memoText" class="memo-textarea"
+            placeholder="例）12/28〜1/5は体育館が使えないためお休みです。&#10;例）★の試合の申込は1/10までにお願いします。"></textarea>
+        </div>
       </div>
     </section>
 
-    <!-- 画像生成 -->
+    <!-- Step5 画像出力 -->
     <section class="card">
-      <h2>画像出力</h2>
+      <h2>Step5. 画像をつくって共有</h2>
       <button id="makeImgBtn" style="display:none;">画像をつくる</button>
       <div id="resultArea"></div>
       <button id="shareBtn" style="display:none;">共有する</button>

@@ -43,8 +43,15 @@ body {
 
 h1 {
   font-size: 22px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   text-align: center;
+}
+
+.lead {
+  font-size: 13px;
+  color: var(--text-sub);
+  text-align: center;
+  margin: 0 0 16px;
 }
 
 .card {
@@ -59,6 +66,11 @@ h1 {
 .card h2 {
   font-size: 18px;
   margin-bottom: 12px;
+}
+
+.subheading {
+  font-size: 14px;
+  margin: 12px 0 6px;
 }
 
 label {

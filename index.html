@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>期間カレンダー画像メーカー</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+    integrity="sha512-BNa5lHn8JUAo8VIRsPIPnq8kWnNjPFqh+hayQLwsp6H6SwJWxVTbTfsP0Swg8bNbQ9RjJTJrQQHB+MImX6rE3g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body class="theme-cool">
+  <div class="container">
+
+    <h1>期間カレンダー画像メーカー</h1>
+
+    <!-- 設定エリア -->
+    <section class="card">
+      <h2>期間設定</h2>
+
+      <label>開始日</label>
+      <input id="startDate" type="date" />
+
+      <label>終了日</label>
+      <input id="endDate" type="date" />
+
+      <label>週の開始</label>
+      <select id="weekStart">
+        <option value="sun">日曜はじまり</option>
+        <option value="mon">月曜はじまり</option>
+      </select>
+
+      <label>カラー</label>
+      <select id="themeSelect">
+        <option value="cool">寒色系（ブルー＆グレー）</option>
+        <option value="warm">暖色系（オレンジ＆ベージュ）</option>
+      </select>
+
+      <button id="generateCalBtn">期間カレンダーを生成</button>
+    </section>
+
+    <!-- 記号設定 -->
+    <section class="card">
+      <h2>記号設定（最大4つ）</h2>
+
+      <div class="symbol-row">
+        <input class="symbol-char" id="sym1" maxlength="1" value="●" />
+        <input class="symbol-label" id="sym1label" placeholder="ラベル（例：通常練習）" value="通常練習" />
+      </div>
+
+      <div class="symbol-row">
+        <input class="symbol-char" id="sym2" maxlength="1" value="▲" />
+        <input class="symbol-label" id="sym2label" placeholder="ラベル（例：17時開始）" value="17時開始" />
+      </div>
+
+      <div class="symbol-row">
+        <input class="symbol-char" id="sym3" maxlength="1" value="✕" />
+        <input class="symbol-label" id="sym3label" placeholder="ラベル（例：お休み）" value="お休み" />
+      </div>
+
+      <div class="symbol-row">
+        <input class="symbol-char" id="sym4" maxlength="1" value="★" />
+        <input class="symbol-label" id="sym4label" placeholder="ラベル（例：試合）" value="試合" />
+      </div>
+    </section>
+
+    <!-- 記号選択UI -->
+    <section class="card">
+      <h2>記号を選ぶ</h2>
+      <div id="symbolButtons"></div>
+      <p class="hint">記号を選んでから、下のカレンダーの日付をタップすると記号が入ります。</p>
+    </section>
+
+    <!-- カレンダー＋凡例（ここを1枚画像にする） -->
+    <section class="card">
+      <h2>編集</h2>
+      <div id="calendarImageArea">
+        <div id="calendarArea"></div>
+        <div id="legendArea"></div>
+      </div>
+    </section>
+
+    <!-- 画像生成 -->
+    <section class="card">
+      <h2>画像出力</h2>
+      <button id="makeImgBtn">画像をつくる</button>
+      <div id="resultArea"></div>
+      <button id="shareBtn" style="display:none;">共有する</button>
+      <p class="hint small">画像を長押しで保存 → LINEやSNSに貼り付けて使えます。</p>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 // グローバル変数
 // ------------------------------------------------------
 let activeSymbol = "";
-let appliedSymbols = {}; // {"2025-03-20": "●▲", ...}
+let appliedSymbols = {}; // {"2025-03-20": "●▲✕", ...}
 let holidaysMap = {};    // {"2025-02-11": "建国記念の日", ...}
 let holidaysLoaded = false;
 
@@ -189,12 +189,11 @@ function toggleSymbolForDate(dateKey, symbolChar, symElement) {
   let current = appliedSymbols[dateKey] || ""; // 例: "●▲"
 
   if (current.includes(symbolChar)) {
-    // すでに含まれている場合 → 取り除く
+    // すでに含まれている → 取り除く
     current = current.split("").filter(c => c !== symbolChar).join("");
   } else {
-    // 含まれていない場合 → 追加（最大4つまで）
+    // 含まれていない → 追加（最大4つまで）
     if (current.length >= 4) {
-      // 4つ入っている場合は何もしない
       return;
     }
     current += symbolChar;
@@ -386,7 +385,7 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 // カレンダー生成（祝日＆レイアウト対応）
 // ------------------------------------------------------
 async function generateCalendar() {
-  appliedSymbols = {};
+  appliedSymbols = {}; // 新規生成時は一度リセット
 
   const startDateStr = document.getElementById("startDate").value;
   const endDateStr = document.getElementById("endDate").value;
@@ -434,9 +433,22 @@ async function generateCalendar() {
 
 
 // ------------------------------------------------------
+// メモ欄の高さを内容に合わせて自動調整
+// ------------------------------------------------------
+function autoResizeMemo() {
+  const ta = document.getElementById("memoText");
+  if (!ta) return;
+  ta.style.height = "auto";
+  ta.style.height = ta.scrollHeight + "px";
+}
+
+
+// ------------------------------------------------------
 // PNG生成（カレンダー＋凡例＋メモ全体）
 // ------------------------------------------------------
 function makeImage() {
+  autoResizeMemo();  // 画像化前にメモを展開
+
   const target = document.getElementById("calendarImageArea");
   if (!target) return;
 
@@ -510,6 +522,13 @@ document.getElementById("makeImgBtn").addEventListener("click", makeImage);
 document.getElementById("shareBtn").addEventListener("click", shareImage);
 document.getElementById("themeSelect").addEventListener("change", applyTheme);
 
+// メモ入力時に自動リサイズ
+const memoEl = document.getElementById("memoText");
+if (memoEl) {
+  memoEl.addEventListener("input", autoResizeMemo);
+}
+
 // 初期設定
 applyTheme();
 createSymbolButtons();
+autoResizeMemo();

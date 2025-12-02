@@ -1,0 +1,242 @@
+:root {
+  --bg-page: #f5f7fb;
+  --card-bg: #ffffff;
+  --primary: #4a90e2;
+  --primary-soft: #e4f0ff;
+  --border-soft: #dde3ee;
+  --text-main: #222222;
+  --text-sub: #666666;
+  /* 週末の背景トーン（寒色系） */
+  --weekend-bg: #f1f5ff;   /* 土曜 */
+  --holiday-bg: #e4edff;   /* 日曜・祝日 */
+}
+
+body.theme-warm {
+  --bg-page: #fff7f0;
+  --card-bg: #ffffff;
+  --primary: #e58b3b;
+  --primary-soft: #ffe8d4;
+  --border-soft: #f0d5b8;
+  --text-main: #2b1c12;
+  --text-sub: #7a5b42;
+  /* 週末の背景トーン（暖色系） */
+  --weekend-bg: #fff1e2;   /* 土曜 */
+  --holiday-bg: #ffe4cf;   /* 日曜・祝日 */
+}
+
+body.theme-cool {
+  /* :root の値をそのまま利用 */
+}
+
+body {
+  font-family: "Noto Sans JP", sans-serif;
+  margin: 0;
+  background: var(--bg-page);
+  padding: 16px;
+  color: var(--text-main);
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 1px solid var(--border-soft);
+}
+
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+label {
+  display: block;
+  margin-top: 8px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+input[type="date"],
+select,
+input,
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccd3e0;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:active {
+  opacity: 0.85;
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.small {
+  font-size: 11px;
+}
+
+/* 記号入力行 */
+.symbol-row {
+  display: flex;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.symbol-char {
+  width: 64px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.symbol-label {
+  flex: 1;
+}
+
+/* 記号ボタン */
+#symbolButtons button {
+  width: auto;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #f2f4fa;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #d2d7e5;
+  font-size: 18px;
+  color: var(--text-main);
+}
+
+#symbolButtons button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* カレンダー全体（画像対象） */
+#calendarImageArea {
+  background: #ffffff;
+}
+
+/* 月ブロック */
+.month-block {
+  margin-bottom: 24px;
+}
+
+.month-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+/* カレンダーグリッド */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border: 1px solid #e1e4ee;
+}
+
+.day-cell {
+  border: 1px solid #f0f2f7;
+  padding: 6px;
+  height: 64px;
+  font-size: 15px;
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+.day-cell .symbol {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-size: 18px;
+}
+
+/* 月外の日付マス */
+.day-disabled {
+  background: #f5f6fa;
+  color: #c1c4d1;
+  cursor: default;
+}
+
+/* 土曜：やや淡い背景 */
+.sat {
+  background: var(--weekend-bg);
+}
+
+/* 日曜＆祝日：もう少し強めの背景 */
+.sun,
+.holiday {
+  background: var(--holiday-bg);
+}
+
+/* 凡例 */
+#legendArea {
+  border-top: 1px solid #e1e4ee;
+  padding: 12px 8px 4px;
+  margin-top: 8px;
+}
+
+.legend-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-soft);
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.legend-symbol {
+  margin-right: 4px;
+  font-size: 16px;
+}
+
+/* 生成結果画像 */
+.result-img {
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+}

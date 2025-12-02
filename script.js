@@ -17,7 +17,7 @@ async function loadHolidays() {
     const res = await fetch("https://holidays-jp.github.io/api/v1/date.json");
     if (!res.ok) throw new Error("failed to fetch holidays");
     const data = await res.json();
-    holidaysMap = data;  // キー: "YYYY-MM-DD", 値: 祝日名
+    holidaysMap = data;
     holidaysLoaded = true;
   } catch (e) {
     console.error("祝日データの取得に失敗しました", e);
@@ -76,7 +76,6 @@ function createSymbolButtons() {
     area.appendChild(btn);
   });
 
-  // 初期は最初のボタンを選択しておく
   if (area.firstChild) {
     area.firstChild.classList.add("active");
     activeSymbol = area.firstChild.dataset.symbol;
@@ -202,16 +201,13 @@ function updateSymbolElement(symElement, symbolString) {
 // ------------------------------------------------------
 function toggleSymbolForDate(dateKey, symbolChar, symElement) {
   if (!symbolChar) return;
-  let current = appliedSymbols[dateKey] || ""; // 例: "●▲"
+
+  let current = appliedSymbols[dateKey] || "";
 
   if (current.includes(symbolChar)) {
-    // すでに含まれている → 取り除く
     current = current.split("").filter(c => c !== symbolChar).join("");
   } else {
-    // 含まれていない → 追加（最大4つまで）
-    if (current.length >= 4) {
-      return;
-    }
+    if (current.length >= 4) return;
     current += symbolChar;
   }
 
@@ -273,7 +269,7 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
       const dayNumber = document.createElement("div");
       dayNumber.textContent = day;
 
-      const nativeDow = curDate.getDay(); // 0(日)〜6(土)
+      const nativeDow = curDate.getDay();
       const isSat = nativeDow === 6;
       const isSun = nativeDow === 0;
       const isHoliday = !!holidaysMap[dateKey];
@@ -310,10 +306,7 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
     block.appendChild(grid);
     area.appendChild(block);
   });
-}
-
-
-// ------------------------------------------------------
+  // ------------------------------------------------------
 // 連続レイアウトの生成（1本のカレンダー）
 // ------------------------------------------------------
 function renderContinuousLayout(startDate, endDate, weekStart, area) {
@@ -334,7 +327,7 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
   const startKey = startDate.toISOString().slice(0, 10);
 
   const first = new Date(startDate);
-  const nativeDowStart = first.getDay(); // 0(日)〜6(土)
+  const nativeDowStart = first.getDay();
   const offsetDays = weekStart === "sun" ? nativeDowStart : (nativeDowStart + 6) % 7;
   first.setDate(first.getDate() - offsetDays);
 
@@ -401,7 +394,7 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 // カレンダー生成（祝日＆レイアウト対応）
 // ------------------------------------------------------
 async function generateCalendar() {
-  appliedSymbols = {}; // 新規生成時は一度リセット
+  appliedSymbols = {};
 
   const startDateStr = document.getElementById("startDate").value;
   const endDateStr = document.getElementById("endDate").value;
@@ -430,7 +423,6 @@ async function generateCalendar() {
 
   await loadHolidays();
 
-  // タイトルの反映
   const titleInput = document.getElementById("calendarTitle");
   const titleArea = document.getElementById("titleArea");
   if (titleInput && titleArea) {
@@ -474,10 +466,10 @@ function autoResizeMemo() {
 
 
 // ------------------------------------------------------
-// PNG生成（カレンダー＋凡例＋メモ全体）
+// PNG生成
 // ------------------------------------------------------
 function makeImage() {
-  autoResizeMemo();  // 画像化前にメモを展開
+  autoResizeMemo();
 
   const target = document.getElementById("calendarImageArea");
   if (!target) return;
@@ -518,3 +510,43 @@ async function shareImage() {
     const res = await fetch(base64);
     const blob = await res.blob();
     const file = new File([blob], "calendar.png", { type: "image/png" });
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "記号入りカレンダー",
+        text: "記号入りカレンダーを共有します。",
+      });
+    } else if (navigator.share) {
+      await navigator.share({
+        title: "記号入りカレンダー",
+        text: "記号入りカレンダーを共有します。",
+      });
+      alert("一部端末では画像が添付されない場合があります。画像を保存してから送信してください。");
+    } else {
+      alert("この端末では共有機能が使えません。画像を長押しして保存してから、SNSに貼り付けてください。");
+    }
+  } catch (e) {
+    console.error(e);
+    alert("共有に失敗しました。画像を保存してから送信してください。");
+  }
+}
+
+
+// ------------------------------------------------------
+// イベント登録
+// ------------------------------------------------------
+document.getElementById("generateCalBtn").addEventListener("click", generateCalendar);
+document.getElementById("makeImgBtn").addEventListener("click", makeImage);
+document.getElementById("shareBtn").addEventListener("click", shareImage);
+document.getElementById("themeSelect").addEventListener("change", applyTheme);
+
+const memoEl = document.getElementById("memoText");
+if (memoEl) {
+  memoEl.addEventListener("input", autoResizeMemo);
+}
+
+// 初期設定
+applyTheme();
+createSymbolButtons();
+autoResizeMemo();

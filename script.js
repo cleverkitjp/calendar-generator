@@ -1,3 +1,8 @@
+window.onerror = function(message, source, lineno, colno, error) {
+  alert("JS error: " + message);
+};
+
+alert("JS loaded");
 // ------------------------------------------------------
 // グローバル変数
 // ------------------------------------------------------
@@ -540,18 +545,9 @@ window.addEventListener("DOMContentLoaded", () => {
   console.log("JS ready");
 
   const genBtn = document.getElementById("generateCalBtn");
-  const makeImgBtn = document.getElementById("makeImgBtn");
-  const shareBtn = document.getElementById("shareBtn");
-  const themeSelect = document.getElementById("themeSelect");
-  const memoEl = document.getElementById("memoText");
-
-  if (genBtn) genBtn.addEventListener("click", generateCalendar);
-  if (makeImgBtn) makeImgBtn.addEventListener("click", makeImage);
-  if (shareBtn) shareBtn.addEventListener("click", shareImage);
-  if (themeSelect) themeSelect.addEventListener("change", applyTheme);
-  if (memoEl) memoEl.addEventListener("input", autoResizeMemo);
-
-  applyTheme();
-  createSymbolButtons();
-  autoResizeMemo();
+  if (genBtn) {
+    genBtn.addEventListener("click", () => {
+      alert("generateCalBtn clicked");
+    });
+  }
 });

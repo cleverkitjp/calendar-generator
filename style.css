@@ -114,7 +114,7 @@ button:active {
   font-size: 11px;
 }
 
-/* 記号入力行 */
+/* 記号入力行（Step2） */
 .symbol-row {
   display: flex;
   margin-bottom: 10px;
@@ -131,7 +131,7 @@ button:active {
   flex: 1;
 }
 
-/* 記号ボタン */
+/* Step4 記号ボタン */
 #symbolButtons {
   margin-bottom: 4px;
 }
@@ -202,6 +202,7 @@ button:active {
   background: #ffffff;
 }
 
+/* 記号表示：複数行に対応（最大4つ） */
 .day-cell .symbol {
   position: absolute;
   right: 4px;
@@ -209,7 +210,7 @@ button:active {
   font-size: 14px;
   line-height: 1.2;
   text-align: right;
-  white-space: pre-line;
+  white-space: pre-line; /* 複数行表示対応 */
 }
 
 /* 範囲外／月外の日付マス */
@@ -280,13 +281,15 @@ button:active {
 
 .memo-textarea {
   width: 100%;
-  min-height: 72px;
+  min-height: 80px;          /* おおよそ4行分 */
   border-radius: 8px;
   border: 1px solid #d5dae6;
   padding: 8px;
   font-size: 13px;
   box-sizing: border-box;
-  resize: vertical;
+  resize: none;              /* ユーザーによるリサイズを禁止 */
+  overflow: hidden;          /* スクロールバーを出さない */
+  line-height: 1.4;
 }
 
 /* 生成結果画像 */

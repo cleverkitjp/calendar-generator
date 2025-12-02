@@ -132,6 +132,10 @@ button:active {
 }
 
 /* 記号ボタン */
+#symbolButtons {
+  margin-bottom: 4px;
+}
+
 #symbolButtons button {
   width: auto;
   padding: 10px 16px;
@@ -202,7 +206,10 @@ button:active {
   position: absolute;
   right: 4px;
   bottom: 2px;
-  font-size: 18px;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: right;
+  white-space: pre-line;
 }
 
 /* 範囲外／月外の日付マス */
@@ -256,6 +263,30 @@ button:active {
 .legend-symbol {
   margin-right: 4px;
   font-size: 16px;
+}
+
+/* メモ欄 */
+.memo-block {
+  border-top: 1px solid #e1e4ee;
+  padding: 10px 4px 8px;
+  margin-top: 8px;
+}
+
+.memo-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.memo-textarea {
+  width: 100%;
+  min-height: 72px;
+  border-radius: 8px;
+  border: 1px solid #d5dae6;
+  padding: 8px;
+  font-size: 13px;
+  box-sizing: border-box;
+  resize: vertical;
 }
 
 /* 生成結果画像 */

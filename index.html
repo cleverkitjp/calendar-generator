@@ -16,12 +16,15 @@
 
     <h1>カレンダー ジェネレーター</h1>
     <p class="lead">
-      部活・習い事・推し活などの活動予定カレンダーを画像でつくって、LINEやInstagramなどで手軽に共有できます。
+      営業日、定休日、イベント日、習い事や部活のスケジュールなどを自由に記号入りで作れる無料のカレンダー画像生成ツール。スマホ対応・登録不要でそのままシェアできます。
     </p>
 
     <!-- Step1 基本設定 -->
     <section class="card">
       <h2>Step1. 基本設定</h2>
+
+      <label>タイトル（任意）</label>
+      <input id="calendarTitle" type="text" placeholder="例：3月の営業カレンダー" />
 
       <label>開始日</label>
       <input id="startDate" type="date" />
@@ -52,27 +55,27 @@
     <section class="card">
       <h2>Step2. 予定の種類</h2>
       <p class="hint">
-        使いたい記号と意味を設定します（例：● 通常練習 / ▲ 17時開始 / ✕ お休み / ★ 試合）。
+        使いたい記号と意味を設定します（例：● 通常営業 / ▲ イベント / ✕ 定休日 / ★ 特別営業）。
       </p>
 
       <div class="symbol-row">
         <input class="symbol-char" id="sym1" maxlength="1" value="●" />
-        <input class="symbol-label" id="sym1label" placeholder="ラベル（例：通常練習）" value="通常練習" />
+        <input class="symbol-label" id="sym1label" placeholder="ラベル（例：通常営業）" value="通常営業" />
       </div>
 
       <div class="symbol-row">
         <input class="symbol-char" id="sym2" maxlength="1" value="▲" />
-        <input class="symbol-label" id="sym2label" placeholder="ラベル（例：17時開始）" value="17時開始" />
+        <input class="symbol-label" id="sym2label" placeholder="ラベル（例：イベント）" value="イベント" />
       </div>
 
       <div class="symbol-row">
         <input class="symbol-char" id="sym3" maxlength="1" value="✕" />
-        <input class="symbol-label" id="sym3label" placeholder="ラベル（例：お休み）" value="お休み" />
+        <input class="symbol-label" id="sym3label" placeholder="ラベル（例：定休日）" value="定休日" />
       </div>
 
       <div class="symbol-row">
         <input class="symbol-char" id="sym4" maxlength="1" value="★" />
-        <input class="symbol-label" id="sym4label" placeholder="ラベル（例：試合）" value="試合" />
+        <input class="symbol-label" id="sym4label" placeholder="ラベル（例：特別営業）" value="特別営業" />
       </div>
     </section>
 
@@ -95,6 +98,9 @@
       </p>
 
       <div id="calendarImageArea">
+        <!-- タイトル（任意） -->
+        <div id="titleArea" class="calendar-main-title" style="display:none;"></div>
+
         <div id="calendarArea"></div>
         <div id="legendArea"></div>
 
@@ -103,7 +109,7 @@
           <textarea
             id="memoText"
             class="memo-textarea"
-            placeholder="例）12/28〜1/5は体育館が使えないためお休みです。&#10;例）★の試合の申込は1/10までにお願いします。"
+            placeholder="例）12/28〜1/5は年末年始休業です。&#10;例）★のイベントは事前予約制です。"
           ></textarea>
         </div>
       </div>

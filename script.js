@@ -534,19 +534,23 @@ async function shareImage() {
 
 
 // ------------------------------------------------------
-// イベント登録
+// イベント登録（DOM読み込み完了後）
 // ------------------------------------------------------
-document.getElementById("generateCalBtn").addEventListener("click", generateCalendar);
-document.getElementById("makeImgBtn").addEventListener("click", makeImage);
-document.getElementById("shareBtn").addEventListener("click", shareImage);
-document.getElementById("themeSelect").addEventListener("change", applyTheme);
+window.addEventListener("DOMContentLoaded", () => {
+  const genBtn = document.getElementById("generateCalBtn");
+  const makeImgBtn = document.getElementById("makeImgBtn");
+  const shareBtn = document.getElementById("shareBtn");
+  const themeSelect = document.getElementById("themeSelect");
+  const memoEl = document.getElementById("memoText");
 
-const memoEl = document.getElementById("memoText");
-if (memoEl) {
-  memoEl.addEventListener("input", autoResizeMemo);
-}
+  if (genBtn) genBtn.addEventListener("click", generateCalendar);
+  if (makeImgBtn) makeImgBtn.addEventListener("click", makeImage);
+  if (shareBtn) shareBtn.addEventListener("click", shareImage);
+  if (themeSelect) themeSelect.addEventListener("change", applyTheme);
+  if (memoEl) memoEl.addEventListener("input", autoResizeMemo);
 
-// 初期設定
-applyTheme();
-createSymbolButtons();
-autoResizeMemo();
+  // 初期設定
+  applyTheme();
+  createSymbolButtons();
+  autoResizeMemo();
+});

@@ -159,6 +159,14 @@ button:active {
   background: #ffffff;
 }
 
+/* 画像用のメインタイトル */
+.calendar-main-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px 4px 4px;
+}
+
 /* 月ブロック */
 .month-block {
   margin-bottom: 24px;

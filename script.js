@@ -2,7 +2,7 @@
 // グローバル変数
 // ------------------------------------------------------
 let activeSymbol = "";
-let appliedSymbols = {}; // {"2025-03-20": "●", ...}
+let appliedSymbols = {}; // {"2025-03-20": "●▲", ...}
 let holidaysMap = {};    // {"2025-02-11": "建国記念の日", ...}
 let holidaysLoaded = false;
 
@@ -45,7 +45,7 @@ function applyTheme() {
 
 
 // ------------------------------------------------------
-// 記号ボタンの初期化
+// 記号ボタンの初期化（Step4）
 // ------------------------------------------------------
 function createSymbolButtons() {
   const symbols = [
@@ -182,6 +182,30 @@ function createWeekdayHeader(weekStart) {
 
 
 // ------------------------------------------------------
+// 1日に最大4つまで記号を入れるロジック
+// ------------------------------------------------------
+function toggleSymbolForDate(dateKey, symbolChar, symElement) {
+  if (!symbolChar) return;
+  let current = appliedSymbols[dateKey] || ""; // 例: "●▲"
+
+  if (current.includes(symbolChar)) {
+    // すでに含まれている場合 → 取り除く
+    current = current.split("").filter(c => c !== symbolChar).join("");
+  } else {
+    // 含まれていない場合 → 追加（最大4つまで）
+    if (current.length >= 4) {
+      // 4つ入っている場合は何もしない
+      return;
+    }
+    current += symbolChar;
+  }
+
+  appliedSymbols[dateKey] = current;
+  symElement.textContent = current;
+}
+
+
+// ------------------------------------------------------
 // 月ごとレイアウトの生成
 // ------------------------------------------------------
 function renderMonthLayout(startDate, endDate, weekStart, area) {
@@ -199,11 +223,9 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
     title.textContent = `${y}年 ${m + 1}月`;
     block.appendChild(title);
 
-    // 曜日ヘッダー
     const weekdayHeader = createWeekdayHeader(weekStart);
     block.appendChild(weekdayHeader);
 
-    // カレンダー本体
     const grid = document.createElement("div");
     grid.className = "calendar-grid";
 
@@ -241,18 +263,15 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
       const isSun = nativeDow === 0;
       const isHoliday = !!holidaysMap[dateKey];
 
-      // 期間外はグレー＆クリック無効
-      if (curDate < startDate || curDate > endDate) {
+      const outOfRange = curDate < startDate || curDate > endDate;
+
+      if (outOfRange) {
         cell.classList.add("day-disabled");
       } else {
-        if (isSat) {
-          cell.classList.add("sat");
-        }
+        if (isSat) cell.classList.add("sat");
         if (isSun || isHoliday) {
           cell.classList.add("sun");
-          if (isHoliday && !isSun) {
-            cell.classList.add("holiday");
-          }
+          if (isHoliday && !isSun) cell.classList.add("holiday");
         }
       }
 
@@ -260,19 +279,13 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
 
       const sym = document.createElement("div");
       sym.className = "symbol";
-      sym.textContent = "";
+      sym.textContent = appliedSymbols[dateKey] || "";
       cell.appendChild(sym);
 
-      if (!(curDate < startDate || curDate > endDate)) {
+      if (!outOfRange) {
         cell.addEventListener("click", () => {
           if (!activeSymbol) return;
-          if (appliedSymbols[dateKey] === activeSymbol) {
-            appliedSymbols[dateKey] = "";
-            sym.textContent = "";
-          } else {
-            appliedSymbols[dateKey] = activeSymbol;
-            sym.textContent = activeSymbol;
-          }
+          toggleSymbolForDate(dateKey, activeSymbol, sym);
         });
       }
 
@@ -303,13 +316,13 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
   const grid = document.createElement("div");
   grid.className = "calendar-grid";
 
-  // 最初の表示開始日（週の頭まで戻す）
+  const startKey = startDate.toISOString().slice(0, 10);
+
   const first = new Date(startDate);
   const nativeDowStart = first.getDay(); // 0(日)〜6(土)
   const offsetDays = weekStart === "sun" ? nativeDowStart : (nativeDowStart + 6) % 7;
   first.setDate(first.getDate() - offsetDays);
 
-  // 最後の表示終了日（週末まで進める）
   const last = new Date(endDate);
   const nativeDowEnd = last.getDay();
   const offsetEnd = weekStart === "sun" ? nativeDowEnd : (nativeDowEnd + 6) % 7;
@@ -322,9 +335,6 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
     cell.className = "day-cell";
 
     const dateKey = cur.toISOString().slice(0, 10);
-    const dayNumber = document.createElement("div");
-    dayNumber.textContent = cur.getDate();
-
     const nativeDow = cur.getDay();
     const isSat = nativeDow === 6;
     const isSun = nativeDow === 0;
@@ -332,17 +342,20 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 
     const outOfRange = cur < startDate || cur > endDate;
 
+    const dayNumber = document.createElement("div");
+    if (!outOfRange && (dateKey === startKey || cur.getDate() === 1)) {
+      dayNumber.textContent = `${cur.getMonth() + 1}/${cur.getDate()}`;
+    } else {
+      dayNumber.textContent = cur.getDate();
+    }
+
     if (outOfRange) {
       cell.classList.add("day-disabled");
     } else {
-      if (isSat) {
-        cell.classList.add("sat");
-      }
+      if (isSat) cell.classList.add("sat");
       if (isSun || isHoliday) {
         cell.classList.add("sun");
-        if (isHoliday && !isSun) {
-          cell.classList.add("holiday");
-        }
+        if (isHoliday && !isSun) cell.classList.add("holiday");
       }
     }
 
@@ -350,19 +363,13 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 
     const sym = document.createElement("div");
     sym.className = "symbol";
-    sym.textContent = "";
+    sym.textContent = appliedSymbols[dateKey] || "";
     cell.appendChild(sym);
 
     if (!outOfRange) {
       cell.addEventListener("click", () => {
         if (!activeSymbol) return;
-        if (appliedSymbols[dateKey] === activeSymbol) {
-          appliedSymbols[dateKey] = "";
-          sym.textContent = "";
-        } else {
-          appliedSymbols[dateKey] = activeSymbol;
-          sym.textContent = activeSymbol;
-        }
+        toggleSymbolForDate(dateKey, activeSymbol, sym);
       });
     }
 
@@ -399,7 +406,6 @@ async function generateCalendar() {
     return;
   }
 
-  // 6ヶ月チェック
   const maxEnd = new Date(startDate);
   maxEnd.setMonth(maxEnd.getMonth() + 6);
   if (endDate > maxEnd) {
@@ -421,14 +427,14 @@ async function generateCalendar() {
   }
 
   renderLegend();
+  createSymbolButtons();
 
-  // カレンダー生成後に画像ボタンを表示
   document.getElementById("makeImgBtn").style.display = "inline-block";
 }
 
 
 // ------------------------------------------------------
-// PNG生成（カレンダー＋凡例全体）
+// PNG生成（カレンダー＋凡例＋メモ全体）
 // ------------------------------------------------------
 function makeImage() {
   const target = document.getElementById("calendarImageArea");
@@ -497,13 +503,11 @@ async function shareImage() {
 // イベント登録
 // ------------------------------------------------------
 document.getElementById("generateCalBtn").addEventListener("click", () => {
-  createSymbolButtons();
   generateCalendar();
 });
 
 document.getElementById("makeImgBtn").addEventListener("click", makeImage);
 document.getElementById("shareBtn").addEventListener("click", shareImage);
-
 document.getElementById("themeSelect").addEventListener("change", applyTheme);
 
 // 初期設定

@@ -7,10 +7,8 @@
 
   <link rel="stylesheet" href="style.css" />
 
-  <!-- html2canvas -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-    integrity="sha512-BNa5lHn8JUAo8VIRsPIPnq8kWnNjPFqh+hayQLwsp6H6SwJWxVTbTfsP0Swg8bNbQ9RjJTJrQQHB+MImX6rE3g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- html2canvas（SRIなしのシンプル読み込み） -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
 <body class="theme-cool">
@@ -18,7 +16,7 @@
 
     <h1>期間カレンダー画像メーカー</h1>
 
-    <!-- 設定エリア -->
+    <!-- 期間設定 -->
     <section class="card">
       <h2>期間設定</h2>
 
@@ -40,7 +38,11 @@
         <option value="warm">暖色系（オレンジ＆ベージュ）</option>
       </select>
 
-      <button id="generateCalBtn">期間カレンダーを生成</button>
+      <label>表示形式</label>
+      <select id="layoutMode">
+        <option value="month">月ごとに分ける</option>
+        <option value="continuous">連続したカレンダー</option>
+      </select>
     </section>
 
     <!-- 記号設定 -->
@@ -64,15 +66,12 @@
 
       <div class="symbol-row">
         <input class="symbol-char" id="sym4" maxlength="1" value="★" />
-        <input class="symbol-label" id="sym4label" placeholder="ラベル（例：試合）" value="試合" />
+        <input class="symbol-label" id="sym4label" placeholder="ラベル（例：試合）」" value="試合" />
       </div>
-    </section>
 
-    <!-- 記号選択UI -->
-    <section class="card">
-      <h2>記号を選ぶ</h2>
-      <div id="symbolButtons"></div>
-      <p class="hint">記号を選んでから、下のカレンダーの日付をタップすると記号が入ります。</p>
+      <!-- カレンダー生成ボタンをここに配置 -->
+      <button id="generateCalBtn">カレンダーを生成</button>
+      <p class="hint">記号と期間を設定してから、カレンダーを生成してください。</p>
     </section>
 
     <!-- カレンダー＋凡例（ここを1枚画像にする） -->
@@ -87,7 +86,7 @@
     <!-- 画像生成 -->
     <section class="card">
       <h2>画像出力</h2>
-      <button id="makeImgBtn">画像をつくる</button>
+      <button id="makeImgBtn" style="display:none;">画像をつくる</button>
       <div id="resultArea"></div>
       <button id="shareBtn" style="display:none;">共有する</button>
       <p class="hint small">画像を長押しで保存 → LINEやSNSに貼り付けて使えます。</p>

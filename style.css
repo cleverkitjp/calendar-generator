@@ -202,15 +202,19 @@ button:active {
   background: #ffffff;
 }
 
-/* 記号表示：複数行に対応（最大4つ） */
+/* 記号表示：2×2 グリッド（最大4つ） */
 .day-cell .symbol {
   position: absolute;
   right: 4px;
   bottom: 2px;
   font-size: 14px;
-  line-height: 1.2;
-  text-align: right;
-  white-space: pre-line; /* 複数行表示対応 */
+  display: grid;
+  grid-template-columns: repeat(2, auto); /* 2列 */
+  grid-auto-rows: auto;
+  row-gap: 2px;
+  column-gap: 2px;
+  justify-items: end;  /* 右寄せ */
+  align-items: end;
 }
 
 /* 範囲外／月外の日付マス */

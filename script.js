@@ -306,7 +306,7 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
     block.appendChild(grid);
     area.appendChild(block);
   });
-  // ------------------------------------------------------
+// ------------------------------------------------------
 // 連続レイアウトの生成（1本のカレンダー）
 // ------------------------------------------------------
 function renderContinuousLayout(startDate, endDate, weekStart, area) {
@@ -391,7 +391,7 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 
 
 // ------------------------------------------------------
-// カレンダー生成（祝日＆レイアウト対応）
+// カレンダー生成
 // ------------------------------------------------------
 async function generateCalendar() {
   appliedSymbols = {};
@@ -455,7 +455,7 @@ async function generateCalendar() {
 
 
 // ------------------------------------------------------
-// メモ欄の高さを内容に合わせて自動調整
+// メモ欄自動リサイズ
 // ------------------------------------------------------
 function autoResizeMemo() {
   const ta = document.getElementById("memoText");
@@ -537,6 +537,8 @@ async function shareImage() {
 // イベント登録（DOM読み込み完了後）
 // ------------------------------------------------------
 window.addEventListener("DOMContentLoaded", () => {
+  console.log("JS ready");
+
   const genBtn = document.getElementById("generateCalBtn");
   const makeImgBtn = document.getElementById("makeImgBtn");
   const shareBtn = document.getElementById("shareBtn");
@@ -549,7 +551,6 @@ window.addEventListener("DOMContentLoaded", () => {
   if (themeSelect) themeSelect.addEventListener("change", applyTheme);
   if (memoEl) memoEl.addEventListener("input", autoResizeMemo);
 
-  // 初期設定
   applyTheme();
   createSymbolButtons();
   autoResizeMemo();

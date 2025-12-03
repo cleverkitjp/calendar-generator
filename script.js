@@ -1,187 +1,62 @@
-// ------------------------------------------------------
-// グローバル変数
-// ------------------------------------------------------
+// ======================================================
+//  Calendar Generator - 完全版 script.js （前半）
+// ======================================================
+
+// 祝日データ
+let holidaysMap = {};
+
+// 記号管理
 let activeSymbol = "";
-let appliedSymbols = {}; // {"2025-03-20": "●▲✕★", ...}
-let holidaysMap = {};    // {"2025-02-11": "建国記念の日", ...}
-let holidaysLoaded = false;
-
+let appliedSymbols = {}; // {"2025-03-20": "●▲✕★" など}
 
 // ------------------------------------------------------
-// 日本の祝日データを読み込む（holidays-jp API）
+// ロード時に祝日データを取得
 // ------------------------------------------------------
 async function loadHolidays() {
-  if (holidaysLoaded) return;
-
   try {
     const res = await fetch("https://holidays-jp.github.io/api/v1/date.json");
-    if (!res.ok) throw new Error("failed to fetch holidays");
-    const data = await res.json();
-    holidaysMap = data;
-    holidaysLoaded = true;
+    if (!res.ok) return;
+    holidaysMap = await res.json();
   } catch (e) {
-    console.error("祝日データの取得に失敗しました", e);
-    holidaysMap = {};
-    holidaysLoaded = false;
+    console.log("祝日データ取得エラー:", e);
   }
 }
 
-
 // ------------------------------------------------------
-// テーマ適用
+// 選択されたテーマ（寒色/暖色）を body.class に反映
 // ------------------------------------------------------
 function applyTheme() {
-  const select = document.getElementById("themeSelect");
-  const val = select.value;
-  const body = document.body;
-  body.classList.remove("theme-cool", "theme-warm");
-
-  if (val === "warm") {
-    body.classList.add("theme-warm");
-  } else {
-    body.classList.add("theme-cool");
-  }
+  const theme = document.getElementById("themeSelect").value;
+  document.body.className = theme === "warm" ? "theme-warm" : "theme-cool";
 }
 
-
 // ------------------------------------------------------
-// 記号ボタンの初期化（Step4）
+// 記号ボタンの生成（最大4つ）
 // ------------------------------------------------------
 function createSymbolButtons() {
-  const symbols = [
-    document.getElementById("sym1").value,
-    document.getElementById("sym2").value,
-    document.getElementById("sym3").value,
-    document.getElementById("sym4").value
-  ];
+  const container = document.getElementById("symbolButtons");
+  container.innerHTML = "";
 
-  const area = document.getElementById("symbolButtons");
-  if (!area) return;
-  area.innerHTML = "";
-
-  symbols.forEach(char => {
-    if (!char) return;
+  for (let i = 1; i <= 4; i++) {
+    const symChar = document.getElementById(`sym${i}`).value.trim() || "";
+    if (!symChar) continue;
 
     const btn = document.createElement("button");
-    btn.type = "button";
-    btn.textContent = char;
-    btn.dataset.symbol = char;
+    btn.className = "symbol-btn";
+    btn.textContent = symChar;
 
     btn.addEventListener("click", () => {
-      [...area.children].forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeSymbol = btn.dataset.symbol;
+      activeSymbol = (activeSymbol === symChar ? "" : symChar);
+      document.querySelectorAll(".symbol-btn").forEach(b => b.classList.remove("active"));
+      if (activeSymbol) btn.classList.add("active");
     });
 
-    area.appendChild(btn);
-  });
-
-  if (area.firstChild) {
-    area.firstChild.classList.add("active");
-    activeSymbol = area.firstChild.dataset.symbol;
+    container.appendChild(btn);
   }
 }
 
-
 // ------------------------------------------------------
-// 期間内の月リスト生成（年月単位）
-// ------------------------------------------------------
-function getMonthsInRange(start, end) {
-  const list = [];
-  const s = new Date(start.getFullYear(), start.getMonth(), 1);
-  const e = new Date(end.getFullYear(), end.getMonth(), 1);
-
-  let cur = new Date(s);
-  while (cur <= e) {
-    list.push(new Date(cur));
-    cur.setMonth(cur.getMonth() + 1);
-  }
-  return list;
-}
-
-
-// ------------------------------------------------------
-// 凡例生成
-// ------------------------------------------------------
-function renderLegend() {
-  const legendArea = document.getElementById("legendArea");
-  legendArea.innerHTML = "";
-
-  const pairs = [
-    {
-      char: document.getElementById("sym1").value,
-      label: document.getElementById("sym1label").value
-    },
-    {
-      char: document.getElementById("sym2").value,
-      label: document.getElementById("sym2label").value
-    },
-    {
-      char: document.getElementById("sym3").value,
-      label: document.getElementById("sym3label").value
-    },
-    {
-      char: document.getElementById("sym4").value,
-      label: document.getElementById("sym4label").value
-    }
-  ];
-
-  const valid = pairs.filter(p => p.char && p.label);
-
-  if (valid.length === 0) return;
-
-  const title = document.createElement("div");
-  title.className = "legend-title";
-  title.textContent = "凡例";
-  legendArea.appendChild(title);
-
-  const row = document.createElement("div");
-  row.className = "legend-row";
-
-  valid.forEach(p => {
-    const item = document.createElement("div");
-    item.className = "legend-item";
-
-    const symSpan = document.createElement("span");
-    symSpan.className = "legend-symbol";
-    symSpan.textContent = p.char;
-
-    const labelSpan = document.createElement("span");
-    labelSpan.textContent = p.label;
-
-    item.appendChild(symSpan);
-    item.appendChild(labelSpan);
-    row.appendChild(item);
-  });
-
-  legendArea.appendChild(row);
-}
-
-
-// ------------------------------------------------------
-// 曜日ヘッダーの生成
-// ------------------------------------------------------
-function createWeekdayHeader(weekStart) {
-  const row = document.createElement("div");
-  row.className = "weekday-row";
-
-  const namesSunStart = ["日", "月", "火", "水", "木", "金", "土"];
-  const namesMonStart = ["月", "火", "水", "木", "金", "土", "日"];
-  const names = weekStart === "mon" ? namesMonStart : namesSunStart;
-
-  names.forEach(name => {
-    const cell = document.createElement("div");
-    cell.className = "weekday-cell";
-    cell.textContent = name;
-    row.appendChild(cell);
-  });
-
-  return row;
-}
-
-
-// ------------------------------------------------------
-// 記号表示を 2×2 グリッドに描画する
+// 文字列の記号を 2×2 グリッド表示にする
 // ------------------------------------------------------
 function updateSymbolElement(symElement, symbolString) {
   symElement.innerHTML = "";
@@ -195,29 +70,64 @@ function updateSymbolElement(symElement, symbolString) {
   });
 }
 
-
 // ------------------------------------------------------
-// 1日に最大4つまで記号を入れるロジック
+// 指定日付の記号 ON/OFF
 // ------------------------------------------------------
-function toggleSymbolForDate(dateKey, symbolChar, symElement) {
-  if (!symbolChar) return;
-
+function toggleSymbolForDate(dateKey, symbol, symElement) {
   let current = appliedSymbols[dateKey] || "";
 
-  if (current.includes(symbolChar)) {
-    current = current.split("").filter(c => c !== symbolChar).join("");
+  if (current.includes(symbol)) {
+    current = current.replace(symbol, "");
   } else {
     if (current.length >= 4) return;
-    current += symbolChar;
+    current += symbol;
   }
 
   appliedSymbols[dateKey] = current;
   updateSymbolElement(symElement, current);
 }
 
+// ------------------------------------------------------
+// 日付範囲の月を取得
+// ------------------------------------------------------
+function getMonthsInRange(start, end) {
+  const months = [];
+  const cur = new Date(start.getFullYear(), start.getMonth(), 1);
+
+  while (cur <= end) {
+    months.push(new Date(cur));
+    cur.setMonth(cur.getMonth() + 1);
+  }
+  return months;
+}
 
 // ------------------------------------------------------
-// 月ごとレイアウトの生成
+// 曜日ヘッダーを作成
+// ------------------------------------------------------
+function createWeekdayHeader(weekStart) {
+  const names = ["日", "月", "火", "水", "木", "金", "土"];
+  let order = [];
+
+  if (weekStart === "mon") {
+    order = ["月", "火", "水", "木", "金", "土", "日"];
+  } else {
+    order = names;
+  }
+
+  const div = document.createElement("div");
+  div.className = "weekday-header";
+
+  order.forEach(w => {
+    const c = document.createElement("div");
+    c.textContent = w;
+    div.appendChild(c);
+  });
+
+  return div;
+}
+
+// ------------------------------------------------------
+// 月ごとレイアウト
 // ------------------------------------------------------
 function renderMonthLayout(startDate, endDate, weekStart, area) {
   const months = getMonthsInRange(startDate, endDate);
@@ -244,9 +154,10 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
     const lastDay = new Date(y, m + 1, 0);
     const daysInMonth = lastDay.getDate();
 
-    const offset = (weekStart === "sun")
-      ? firstDay.getDay()
-      : (firstDay.getDay() + 6) % 7;
+    const offset =
+      weekStart === "sun"
+        ? firstDay.getDay()
+        : (firstDay.getDay() + 6) % 7;
 
     const totalCells = offset + daysInMonth;
     const rows = Math.ceil(totalCells / 7);
@@ -269,11 +180,10 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
       const dayNumber = document.createElement("div");
       dayNumber.textContent = day;
 
-      const nativeDow = curDate.getDay();
-      const isSat = nativeDow === 6;
-      const isSun = nativeDow === 0;
+      const dow = curDate.getDay();
+      const isSat = dow === 6;
+      const isSun = dow === 0;
       const isHoliday = !!holidaysMap[dateKey];
-
       const outOfRange = curDate < startDate || curDate > endDate;
 
       if (outOfRange) {
@@ -306,8 +216,15 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
     block.appendChild(grid);
     area.appendChild(block);
   });
+} // ← 閉じ括弧OK！（ここが最重要）
+
+// ===== ここまで前半 =====
+// ======================================================
+//  Calendar Generator - 完全版 script.js （後半）
+// ======================================================
+
 // ------------------------------------------------------
-// 連続レイアウトの生成（1本のカレンダー）
+// 連続レイアウト（期間全体を1本で表示）
 // ------------------------------------------------------
 function renderContinuousLayout(startDate, endDate, weekStart, area) {
   const block = document.createElement("div");
@@ -328,12 +245,18 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 
   const first = new Date(startDate);
   const nativeDowStart = first.getDay();
-  const offsetDays = weekStart === "sun" ? nativeDowStart : (nativeDowStart + 6) % 7;
+  const offsetDays =
+    weekStart === "sun"
+      ? nativeDowStart
+      : (nativeDowStart + 6) % 7;
   first.setDate(first.getDate() - offsetDays);
 
   const last = new Date(endDate);
   const nativeDowEnd = last.getDay();
-  const offsetEnd = weekStart === "sun" ? nativeDowEnd : (nativeDowEnd + 6) % 7;
+  const offsetEnd =
+    weekStart === "sun"
+      ? nativeDowEnd
+      : (nativeDowEnd + 6) % 7;
   const tailDays = 6 - offsetEnd;
   last.setDate(last.getDate() + tailDays);
 
@@ -343,15 +266,16 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
     cell.className = "day-cell";
 
     const dateKey = cur.toISOString().slice(0, 10);
-    const nativeDow = cur.getDay();
-    const isSat = nativeDow === 6;
-    const isSun = nativeDow === 0;
+    const dow = cur.getDay();
+    const isSat = dow === 6;
+    const isSun = dow === 0;
     const isHoliday = !!holidaysMap[dateKey];
 
     const outOfRange = cur < startDate || cur > endDate;
 
     const dayNumber = document.createElement("div");
     if (!outOfRange && (dateKey === startKey || cur.getDate() === 1)) {
+      // 期間の最初と、月が変わった日のみ「M/D」表記
       dayNumber.textContent = `${cur.getMonth() + 1}/${cur.getDate()}`;
     } else {
       dayNumber.textContent = cur.getDate();
@@ -389,9 +313,63 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
   area.appendChild(block);
 }
 
+// ------------------------------------------------------
+// 凡例の描画
+// ------------------------------------------------------
+function renderLegend() {
+  const legendArea = document.getElementById("legendArea");
+  legendArea.innerHTML = "";
+
+  const pairs = [];
+  for (let i = 1; i <= 4; i++) {
+    const char = document.getElementById(`sym${i}`).value.trim();
+    const label = document.getElementById(`sym${i}label`).value.trim();
+    if (char && label) {
+      pairs.push({ char, label });
+    }
+  }
+
+  if (pairs.length === 0) return;
+
+  const title = document.createElement("div");
+  title.className = "legend-title";
+  title.textContent = "凡例";
+  legendArea.appendChild(title);
+
+  const row = document.createElement("div");
+  row.className = "legend-row";
+
+  pairs.forEach(p => {
+    const item = document.createElement("div");
+    item.className = "legend-item";
+
+    const symSpan = document.createElement("span");
+    symSpan.className = "legend-symbol";
+    symSpan.textContent = p.char;
+
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = p.label;
+
+    item.appendChild(symSpan);
+    item.appendChild(labelSpan);
+    row.appendChild(item);
+  });
+
+  legendArea.appendChild(row);
+}
 
 // ------------------------------------------------------
-// カレンダー生成
+// メモ欄の自動リサイズ
+// ------------------------------------------------------
+function autoResizeMemo() {
+  const ta = document.getElementById("memoText");
+  if (!ta) return;
+  ta.style.height = "auto";
+  ta.style.height = ta.scrollHeight + "px";
+}
+
+// ------------------------------------------------------
+// カレンダー生成（メイン処理）
 // ------------------------------------------------------
 async function generateCalendar() {
   appliedSymbols = {};
@@ -402,7 +380,7 @@ async function generateCalendar() {
   const layoutMode = document.getElementById("layoutMode").value;
 
   if (!startDateStr || !endDateStr) {
-    alert("開始日と終了日を入力してください");
+    alert("開始日と終了日を入力してください。");
     return;
   }
 
@@ -410,19 +388,21 @@ async function generateCalendar() {
   const endDate = new Date(endDateStr);
 
   if (endDate < startDate) {
-    alert("終了日は開始日より後にしてください");
+    alert("終了日は開始日より後にしてください。");
     return;
   }
 
   const maxEnd = new Date(startDate);
   maxEnd.setMonth(maxEnd.getMonth() + 6);
   if (endDate > maxEnd) {
-    alert("期間は最大6ヶ月までです");
+    alert("期間は最大6ヶ月までです。");
     return;
   }
 
+  // 祝日データ読み込み
   await loadHolidays();
 
+  // タイトル反映
   const titleInput = document.getElementById("calendarTitle");
   const titleArea = document.getElementById("titleArea");
   if (titleInput && titleArea) {
@@ -436,37 +416,24 @@ async function generateCalendar() {
     }
   }
 
-  const area = document.getElementById("calendarArea");
-  area.innerHTML = "";
+  const calendarArea = document.getElementById("calendarArea");
+  calendarArea.innerHTML = "";
   document.getElementById("resultArea").innerHTML = "";
   document.getElementById("shareBtn").style.display = "none";
 
   if (layoutMode === "continuous") {
-    renderContinuousLayout(startDate, endDate, weekStart, area);
+    renderContinuousLayout(startDate, endDate, weekStart, calendarArea);
   } else {
-    renderMonthLayout(startDate, endDate, weekStart, area);
+    renderMonthLayout(startDate, endDate, weekStart, calendarArea);
   }
 
   renderLegend();
   createSymbolButtons();
-
   document.getElementById("makeImgBtn").style.display = "inline-block";
 }
 
-
 // ------------------------------------------------------
-// メモ欄自動リサイズ
-// ------------------------------------------------------
-function autoResizeMemo() {
-  const ta = document.getElementById("memoText");
-  if (!ta) return;
-  ta.style.height = "auto";
-  ta.style.height = ta.scrollHeight + "px";
-}
-
-
-// ------------------------------------------------------
-// PNG生成
+// 画像生成（html2canvas）
 // ------------------------------------------------------
 function makeImage() {
   autoResizeMemo();
@@ -486,18 +453,17 @@ function makeImage() {
     result.innerHTML = "";
     result.appendChild(img);
 
-    const share = document.getElementById("shareBtn");
-    share.style.display = "block";
-    share.dataset.image = img.src;
+    const shareBtn = document.getElementById("shareBtn");
+    shareBtn.style.display = "block";
+    shareBtn.dataset.image = img.src;
   }).catch(err => {
     console.error(err);
     alert("画像の生成に失敗しました。");
   });
 }
 
-
 // ------------------------------------------------------
-// SNS共有
+// Web Share API による共有
 // ------------------------------------------------------
 async function shareImage() {
   const base64 = document.getElementById("shareBtn").dataset.image;
@@ -524,7 +490,7 @@ async function shareImage() {
       });
       alert("一部端末では画像が添付されない場合があります。画像を保存してから送信してください。");
     } else {
-      alert("この端末では共有機能が使えません。画像を長押しして保存してから、SNSに貼り付けてください。");
+      alert("この端末では共有機能が使えません。画像を保存してからSNS等に貼り付けてください。");
     }
   } catch (e) {
     console.error(e);
@@ -532,13 +498,10 @@ async function shareImage() {
   }
 }
 
-
 // ------------------------------------------------------
-// イベント登録（DOM読み込み完了後）
+// 初期化＆イベント登録
 // ------------------------------------------------------
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("JS ready");
-
   const genBtn = document.getElementById("generateCalBtn");
   const makeImgBtn = document.getElementById("makeImgBtn");
   const shareBtn = document.getElementById("shareBtn");

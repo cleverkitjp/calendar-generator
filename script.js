@@ -1,5 +1,5 @@
 // ======================================================
-//  Calendar Generator - 完全版 script.js （前半）
+//  Calendar Generator - script.js
 // ======================================================
 
 // 祝日データ
@@ -10,7 +10,7 @@ let activeSymbol = "";
 let appliedSymbols = {}; // {"2025-03-20": "●▲✕★" など}
 
 // ------------------------------------------------------
-// ロード時に祝日データを取得
+// 祝日データ取得
 // ------------------------------------------------------
 async function loadHolidays() {
   try {
@@ -23,7 +23,7 @@ async function loadHolidays() {
 }
 
 // ------------------------------------------------------
-// 選択されたテーマ（寒色/暖色）を body.class に反映
+// テーマ反映
 // ------------------------------------------------------
 function applyTheme() {
   const theme = document.getElementById("themeSelect").value;
@@ -216,13 +216,7 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
     block.appendChild(grid);
     area.appendChild(block);
   });
-} // ← 閉じ括弧OK！（ここが最重要）
-
-// ===== ここまで前半 =====
-// ======================================================
-//  Calendar Generator - 完全版 script.js （後半）
-// ======================================================
-
+}
 // ------------------------------------------------------
 // 連続レイアウト（期間全体を1本で表示）
 // ------------------------------------------------------
@@ -275,7 +269,6 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 
     const dayNumber = document.createElement("div");
     if (!outOfRange && (dateKey === startKey || cur.getDate() === 1)) {
-      // 期間の最初と、月が変わった日のみ「M/D」表記
       dayNumber.textContent = `${cur.getMonth() + 1}/${cur.getDate()}`;
     } else {
       dayNumber.textContent = cur.getDate();
@@ -314,7 +307,7 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 }
 
 // ------------------------------------------------------
-// 凡例の描画
+// 凡例の描画（見出しなし）
 // ------------------------------------------------------
 function renderLegend() {
   const legendArea = document.getElementById("legendArea");
@@ -330,11 +323,6 @@ function renderLegend() {
   }
 
   if (pairs.length === 0) return;
-
-  const title = document.createElement("div");
-  title.className = "legend-title";
-  title.textContent = "凡例";
-  legendArea.appendChild(title);
 
   const row = document.createElement("div");
   row.className = "legend-row";
@@ -384,8 +372,9 @@ async function generateCalendar() {
     return;
   }
 
-  const startDate = new Date(startDateStr);
-  const endDate = new Date(endDateStr);
+  // タイムゾーンのズレを避けるため、明示的に時刻を付与
+  const startDate = new Date(startDateStr + "T00:00:00");
+  const endDate = new Date(endDateStr + "T23:59:59");
 
   if (endDate < startDate) {
     alert("終了日は開始日より後にしてください。");
@@ -441,25 +430,46 @@ function makeImage() {
   const target = document.getElementById("calendarImageArea");
   if (!target) return;
 
+  // メモが空なら一時的に非表示にする
+  const memoBlock = document.querySelector(".memo-block");
+  const memoTextEl = document.getElementById("memoText");
+  let hideMemo = false;
+
+  if (memoBlock && memoTextEl) {
+    if (memoTextEl.value.trim() === "") {
+      hideMemo = true;
+      memoBlock.style.display = "none";
+    }
+  }
+
   html2canvas(target, {
     scale: 2,
     backgroundColor: "#ffffff"
-  }).then(canvas => {
-    const img = document.createElement("img");
-    img.src = canvas.toDataURL("image/png");
-    img.className = "result-img";
+  })
+    .then(canvas => {
+      if (hideMemo && memoBlock) {
+        memoBlock.style.display = "";
+      }
 
-    const result = document.getElementById("resultArea");
-    result.innerHTML = "";
-    result.appendChild(img);
+      const img = document.createElement("img");
+      img.src = canvas.toDataURL("image/png");
+      img.className = "result-img";
 
-    const shareBtn = document.getElementById("shareBtn");
-    shareBtn.style.display = "block";
-    shareBtn.dataset.image = img.src;
-  }).catch(err => {
-    console.error(err);
-    alert("画像の生成に失敗しました。");
-  });
+      const result = document.getElementById("resultArea");
+      result.innerHTML = "";
+      result.appendChild(img);
+
+      const shareBtn = document.getElementById("shareBtn");
+      shareBtn.style.display = "block";
+      shareBtn.dataset.image = img.src;
+    })
+    .catch(err => {
+      if (hideMemo && memoBlock) {
+        memoBlock.style.display = "";
+      }
+      console.error(err);
+      alert("画像の生成に失敗しました。");
+    });
 }
 
 // ------------------------------------------------------

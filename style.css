@@ -1,313 +1,320 @@
 :root {
-  --bg-page: #f5f7fb;
+  --bg: #f5f7fb;
   --card-bg: #ffffff;
-  --primary: #4a90e2;
-  --primary-soft: #e4f0ff;
-  --border-soft: #dde3ee;
-  --text-main: #222222;
-  --text-sub: #666666;
-  /* 週末の背景トーン（寒色系） */
-  --weekend-bg: #f1f5ff;   /* 土曜 */
-  --holiday-bg: #e4edff;   /* 日曜・祝日 */
+  --border: #dde2ee;
+  --text: #333333;
+  --muted-text: #7b8190;
+
+  --primary-cool: #4a90e2;
+  --accent-cool: #e6f2ff;
+
+  --primary-warm: #ff9800;
+  --accent-warm: #fff3e0;
+
+  --sun: #ff6b6b;
+  --sat: #4a90e2;
+}
+
+/* テーマ切替 */
+body.theme-cool {
+  --primary: var(--primary-cool);
+  --accent: var(--accent-cool);
 }
 
 body.theme-warm {
-  --bg-page: #fff7f0;
-  --card-bg: #ffffff;
-  --primary: #e58b3b;
-  --primary-soft: #ffe8d4;
-  --border-soft: #f0d5b8;
-  --text-main: #2b1c12;
-  --text-sub: #7a5b42;
-  /* 週末の背景トーン（暖色系） */
-  --weekend-bg: #fff1e2;   /* 土曜 */
-  --holiday-bg: #ffe4cf;   /* 日曜・祝日 */
-}
-
-body.theme-cool {
-  /* :root の値をそのまま利用 */
+  --primary: var(--primary-warm);
+  --accent: var(--accent-warm);
 }
 
 body {
-  font-family: "Noto Sans JP", sans-serif;
   margin: 0;
-  background: var(--bg-page);
-  padding: 16px;
-  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
 
+/* コンテナ */
 .container {
-  max-width: 600px;
-  margin: auto;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
+/* 見出し */
 h1 {
-  font-size: 22px;
-  margin-bottom: 8px;
-  text-align: center;
+  font-size: 1.4rem;
+  margin: 0 0 8px;
 }
 
 .lead {
-  font-size: 13px;
-  color: var(--text-sub);
-  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted-text);
   margin: 0 0 16px;
 }
 
+/* カード */
 .card {
   background: var(--card-bg);
-  padding: 16px;
   border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  border: 1px solid var(--border-soft);
-}
-
-.card h2 {
-  font-size: 18px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
   margin-bottom: 12px;
 }
 
-.subheading {
-  font-size: 14px;
-  margin: 12px 0 6px;
+.card h2 {
+  font-size: 1.1rem;
+  margin: 0 0 12px;
 }
 
+/* ラベル・入力 */
 label {
   display: block;
-  margin-top: 8px;
-  font-weight: bold;
-  font-size: 14px;
+  font-size: 0.85rem;
+  margin: 10px 0 4px;
 }
 
+input[type="text"],
 input[type="date"],
-select,
-input,
-button {
+select {
   width: 100%;
-  padding: 10px;
-  margin-top: 6px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
   border-radius: 8px;
-  border: 1px solid #ccd3e0;
-  font-size: 16px;
+  border: 1px solid var(--border);
   box-sizing: border-box;
+  background: #fff;
 }
 
+/* ボタン共通 */
 button {
-  background: var(--primary);
-  color: white;
   border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
   cursor: pointer;
+  background: var(--primary);
+  color: #fff;
 }
 
-button:active {
-  opacity: 0.85;
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
+/* Step4小見出し */
+.subheading {
+  font-size: 0.9rem;
+  margin: 0 0 8px;
+}
+
+/* ヒントテキスト */
 .hint {
+  font-size: 0.8rem;
+  color: var(--muted-text);
   margin-top: 8px;
-  font-size: 12px;
-  color: var(--text-sub);
 }
 
-.small {
-  font-size: 11px;
+.hint.small {
+  font-size: 0.75rem;
 }
 
-/* 記号入力行（Step2） */
+/* 記号設定行 */
 .symbol-row {
   display: flex;
-  margin-bottom: 10px;
   gap: 8px;
+  margin-bottom: 8px;
 }
 
 .symbol-char {
-  width: 64px;
-  font-size: 24px;
+  width: 52px;
   text-align: center;
+  font-size: 1.1rem;
 }
 
 .symbol-label {
   flex: 1;
 }
 
-/* Step4 記号ボタン */
+/* Step4の記号ボタン */
 #symbolButtons {
-  margin-bottom: 4px;
-}
-
-#symbolButtons button {
-  width: auto;
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: #f2f4fa;
-  margin-right: 8px;
+  display: flex;
+  gap: 8px;
   margin-bottom: 8px;
-  border: 1px solid #d2d7e5;
-  font-size: 18px;
-  color: var(--text-main);
+  flex-wrap: wrap;
 }
 
-#symbolButtons button.active {
+.symbol-btn {
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.symbol-btn.active {
   background: var(--primary);
-  color: white;
-  border-color: var(--primary);
+  color: #fff;
 }
 
-/* カレンダー全体（画像対象） */
+/* カレンダー全体 */
 #calendarImageArea {
-  background: #ffffff;
+  margin-top: 12px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
 }
 
-/* 画像用のメインタイトル */
+/* カレンダータイトル */
 .calendar-main-title {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 600;
   text-align: center;
-  padding: 8px 4px 4px;
+  margin-bottom: 8px;
 }
 
 /* 月ブロック */
 .month-block {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
+/* 月タイトル */
 .month-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 4px;
 }
 
-/* 曜日ヘッダー行 */
-.weekday-row {
+/* 曜日ヘッダー：7列で横並び */
+.weekday-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--border);
 }
 
-.weekday-cell {
+.weekday-header div {
   text-align: center;
-  font-size: 13px;
   padding: 4px 0;
-  color: var(--text-sub);
+  font-size: 0.8rem;
+  color: var(--muted-text);
 }
 
 /* カレンダーグリッド */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border: 1px solid #e1e4ee;
+  border-left: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
+/* 日セル */
 .day-cell {
-  border: 1px solid #f0f2f7;
-  padding: 6px;
-  height: 64px;
-  font-size: 15px;
-  position: relative;
-  cursor: pointer;
+  min-height: 48px;
+  border-right: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  padding: 2px 3px;
   box-sizing: border-box;
-  background: #ffffff;
+  position: relative;
+  font-size: 0.8rem;
+  background: #fff;
 }
 
-/* 記号表示：2×2 グリッド（最大4つ） */
-.day-cell .symbol {
-  position: absolute;
-  right: 4px;
-  bottom: 2px;
-  font-size: 14px;
+/* 日付数字 */
+.day-cell > div:first-child {
+  font-size: 0.8rem;
+}
+
+/* 土日・祝日の色 */
+.day-cell.sat {
+  background: rgba(74, 144, 226, 0.06);
+}
+
+.day-cell.sun {
+  background: rgba(255, 107, 107, 0.06);
+}
+
+/* 期間外のグレーアウト */
+.day-cell.day-disabled {
+  background: #f3f4f7;
+  color: #c0c4d0;
+}
+
+/* 記号部分（2×2グリッド） */
+.symbol {
   display: grid;
-  grid-template-columns: repeat(2, auto); /* 2列 */
-  grid-auto-rows: auto;
-  row-gap: 2px;
-  column-gap: 2px;
-  justify-items: end;  /* 右寄せ */
-  align-items: end;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1.1em;
+  gap: 0;
+  margin-top: 2px;
+  font-size: 0.9rem;
 }
 
-/* 範囲外／月外の日付マス */
-.day-disabled {
-  background: #f5f6fa;
-  color: #c1c4d1;
-  cursor: default;
+.symbol span {
+  text-align: center;
+  line-height: 1.1em;
 }
 
-/* 土曜：やや淡い背景 */
-.sat {
-  background: var(--weekend-bg);
-}
-
-/* 日曜＆祝日：もう少し強めの背景 */
-.sun,
-.holiday {
-  background: var(--holiday-bg);
-}
-
-/* 凡例 */
+/* 凡例エリア */
 #legendArea {
-  border-top: 1px solid #e1e4ee;
-  padding: 12px 8px 4px;
   margin-top: 8px;
-}
-
-.legend-title {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 8px;
+  font-size: 0.8rem;
 }
 
 .legend-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .legend-item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  padding: 4px 8px;
+  gap: 4px;
+  padding: 2px 6px;
   border-radius: 999px;
-  background: var(--primary-soft);
-  border: 1px solid var(--border-soft);
-  font-size: 13px;
-  color: var(--text-main);
+  background: var(--accent);
 }
 
 .legend-symbol {
-  margin-right: 4px;
-  font-size: 16px;
+  font-weight: 600;
 }
 
-/* メモ欄 */
+/* メモ */
 .memo-block {
-  border-top: 1px solid #e1e4ee;
-  padding: 10px 4px 8px;
   margin-top: 8px;
-}
-
-.memo-title {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 4px;
 }
 
 .memo-textarea {
   width: 100%;
-  min-height: 80px;          /* おおよそ4行分 */
-  border-radius: 8px;
-  border: 1px solid #d5dae6;
-  padding: 8px;
-  font-size: 13px;
+  min-height: 4.5em;
+  font-size: 0.8rem;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  resize: none;
   box-sizing: border-box;
-  resize: none;              /* ユーザーによるリサイズを禁止 */
-  overflow: hidden;          /* スクロールバーを出さない */
-  line-height: 1.4;
 }
 
-/* 生成結果画像 */
+/* 出力画像 */
 .result-img {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 12px;
   border-radius: 12px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--border);
+}
+
+/* スマホ向け微調整 */
+@media (max-width: 600px) {
+  .container {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .day-cell {
+    min-height: 44px;
+  }
 }

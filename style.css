@@ -64,7 +64,29 @@ h1 {
 
 .card h2 {
   font-size: 1.1rem;
-  margin: 0 0 12px;
+  margin: 0;
+}
+
+/* カードヘッダー（Step1 見出し＋復元ボタン） */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.restore-btn {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  background: var(--accent);
+  color: var(--text);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.restore-btn:hover {
+  opacity: 0.85;
 }
 
 /* ラベル・入力 */

@@ -9,6 +9,9 @@ let holidaysMap = {};
 let activeSymbol = "";
 let appliedSymbols = {}; // {"2025-03-20": "●▲✕★" など}
 
+// ローカル保存キー
+const STORAGE_KEY = "calendarGeneratorState";
+
 // ------------------------------------------------------
 // 祝日データ取得
 // ------------------------------------------------------
@@ -26,8 +29,105 @@ async function loadHolidays() {
 // テーマ反映
 // ------------------------------------------------------
 function applyTheme() {
-  const theme = document.getElementById("themeSelect").value;
+  const themeSelect = document.getElementById("themeSelect");
+  if (!themeSelect) return;
+  const theme = themeSelect.value;
   document.body.className = theme === "warm" ? "theme-warm" : "theme-cool";
+}
+
+// ------------------------------------------------------
+// 現在の状態を localStorage に保存
+// ------------------------------------------------------
+function saveState() {
+  try {
+    const titleInput = document.getElementById("calendarTitle");
+    const startInput = document.getElementById("startDate");
+    const endInput = document.getElementById("endDate");
+    const weekStartSel = document.getElementById("weekStart");
+    const themeSelect = document.getElementById("themeSelect");
+    const layoutModeSel = document.getElementById("layoutMode");
+    const memoEl = document.getElementById("memoText");
+
+    const symbols = [];
+    for (let i = 1; i <= 4; i++) {
+      const charEl = document.getElementById(`sym${i}`);
+      const labelEl = document.getElementById(`sym${i}label`);
+      symbols.push({
+        char: (charEl && charEl.value) || "",
+        label: (labelEl && labelEl.value) || ""
+      });
+    }
+
+    const state = {
+      title: titleInput ? titleInput.value || "" : "",
+      startDate: startInput ? startInput.value || "" : "",
+      endDate: endInput ? endInput.value || "" : "",
+      weekStart: weekStartSel ? weekStartSel.value || "sun" : "sun",
+      theme: themeSelect ? themeSelect.value || "cool" : "cool",
+      layoutMode: layoutModeSel ? layoutModeSel.value || "month" : "month",
+      symbols,
+      memo: memoEl ? memoEl.value || "" : "",
+      appliedSymbols
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.log("状態保存エラー:", e);
+  }
+}
+
+// ------------------------------------------------------
+// 状態を復元してカレンダーを再生成
+// ------------------------------------------------------
+function restoreState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      alert("前回のカレンダーが見つかりません。");
+      return;
+    }
+
+    const state = JSON.parse(raw) || {};
+
+    const titleInput = document.getElementById("calendarTitle");
+    const startInput = document.getElementById("startDate");
+    const endInput = document.getElementById("endDate");
+    const weekStartSel = document.getElementById("weekStart");
+    const themeSelect = document.getElementById("themeSelect");
+    const layoutModeSel = document.getElementById("layoutMode");
+    const memoEl = document.getElementById("memoText");
+
+    if (titleInput) titleInput.value = state.title || "";
+    if (startInput) startInput.value = state.startDate || "";
+    if (endInput) endInput.value = state.endDate || "";
+    if (weekStartSel) weekStartSel.value = state.weekStart || "sun";
+    if (themeSelect) themeSelect.value = state.theme || "cool";
+    if (layoutModeSel) layoutModeSel.value = state.layoutMode || "month";
+    if (memoEl) memoEl.value = state.memo || "";
+
+    // 記号とラベル
+    if (Array.isArray(state.symbols)) {
+      for (let i = 1; i <= 4; i++) {
+        const s = state.symbols[i - 1] || {};
+        const charEl = document.getElementById(`sym${i}`);
+        const labelEl = document.getElementById(`sym${i}label`);
+        if (charEl && typeof s.char === "string") charEl.value = s.char;
+        if (labelEl && typeof s.label === "string") labelEl.value = s.label;
+      }
+    }
+
+    // 記号配置を復元
+    appliedSymbols = state.appliedSymbols || {};
+
+    applyTheme();
+    autoResizeMemo();
+    createSymbolButtons();
+    generateCalendar(); // appliedSymbols を見て描画
+
+  } catch (e) {
+    console.log("状態復元エラー:", e);
+    alert("復元に失敗しました。");
+  }
 }
 
 // ------------------------------------------------------
@@ -35,10 +135,12 @@ function applyTheme() {
 // ------------------------------------------------------
 function createSymbolButtons() {
   const container = document.getElementById("symbolButtons");
+  if (!container) return;
   container.innerHTML = "";
 
   for (let i = 1; i <= 4; i++) {
-    const symChar = document.getElementById(`sym${i}`).value.trim() || "";
+    const symCharInput = document.getElementById(`sym${i}`);
+    const symChar = symCharInput ? symCharInput.value.trim() : "";
     if (!symChar) continue;
 
     const btn = document.createElement("button");
@@ -85,6 +187,7 @@ function toggleSymbolForDate(dateKey, symbol, symElement) {
 
   appliedSymbols[dateKey] = current;
   updateSymbolElement(symElement, current);
+  saveState();
 }
 
 // ------------------------------------------------------
@@ -311,12 +414,15 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 // ------------------------------------------------------
 function renderLegend() {
   const legendArea = document.getElementById("legendArea");
+  if (!legendArea) return;
   legendArea.innerHTML = "";
 
   const pairs = [];
   for (let i = 1; i <= 4; i++) {
-    const char = document.getElementById(`sym${i}`).value.trim();
-    const label = document.getElementById(`sym${i}label`).value.trim();
+    const charEl = document.getElementById(`sym${i}`);
+    const labelEl = document.getElementById(`sym${i}label`);
+    const char = charEl ? charEl.value.trim() : "";
+    const label = labelEl ? labelEl.value.trim() : "";
     if (char && label) {
       pairs.push({ char, label });
     }
@@ -360,8 +466,6 @@ function autoResizeMemo() {
 // カレンダー生成（メイン処理）
 // ------------------------------------------------------
 async function generateCalendar() {
-  appliedSymbols = {};
-
   const startDateStr = document.getElementById("startDate").value;
   const endDateStr = document.getElementById("endDate").value;
   const weekStart = document.getElementById("weekStart").value;
@@ -419,6 +523,7 @@ async function generateCalendar() {
   renderLegend();
   createSymbolButtons();
   document.getElementById("makeImgBtn").style.display = "inline-block";
+  saveState();
 }
 
 // ------------------------------------------------------
@@ -517,12 +622,14 @@ window.addEventListener("DOMContentLoaded", () => {
   const shareBtn = document.getElementById("shareBtn");
   const themeSelect = document.getElementById("themeSelect");
   const memoEl = document.getElementById("memoText");
+  const restoreBtn = document.getElementById("restoreBtn");
 
   if (genBtn) genBtn.addEventListener("click", generateCalendar);
   if (makeImgBtn) makeImgBtn.addEventListener("click", makeImage);
   if (shareBtn) shareBtn.addEventListener("click", shareImage);
-  if (themeSelect) themeSelect.addEventListener("change", applyTheme);
-  if (memoEl) memoEl.addEventListener("input", autoResizeMemo);
+  if (themeSelect) themeSelect.addEventListener("change", () => { applyTheme(); saveState(); });
+  if (memoEl) memoEl.addEventListener("input", () => { autoResizeMemo(); saveState(); });
+  if (restoreBtn) restoreBtn.addEventListener("click", restoreState);
 
   applyTheme();
   createSymbolButtons();

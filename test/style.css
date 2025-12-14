@@ -5,6 +5,13 @@
   --text: #333333;
   --muted-text: #7b8190;
 
+  --calendar-base-rgb: 255, 255, 255;
+  --calendar-border: rgba(0, 0, 0, 0.08);
+  --calendar-muted: rgba(230, 234, 241, 0.9);
+  --calendar-shadow: rgba(0, 0, 0, 0.05);
+  --calendar-bg-image: none;
+  --paper-alpha: 0.92;
+
   --primary-cool: #4a90e2;
   --accent-cool: #e6f2ff;
 
@@ -19,11 +26,19 @@
 body.theme-cool {
   --primary: var(--primary-cool);
   --accent: var(--accent-cool);
+  --calendar-base-rgb: 240, 246, 255;
+  --calendar-border: rgba(74, 144, 226, 0.2);
+  --calendar-muted: rgba(223, 233, 246, 0.9);
+  --calendar-shadow: rgba(74, 144, 226, 0.12);
 }
 
 body.theme-warm {
   --primary: var(--primary-warm);
   --accent: var(--accent-warm);
+  --calendar-base-rgb: 252, 245, 236;
+  --calendar-border: rgba(210, 170, 120, 0.25);
+  --calendar-muted: rgba(243, 231, 214, 0.9);
+  --calendar-shadow: rgba(201, 156, 107, 0.12);
 }
 
 body {
@@ -108,6 +123,18 @@ select {
   background: #fff;
 }
 
+.bg-input-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
 /* ボタン共通 */
 button {
   border: none;
@@ -122,6 +149,16 @@ button {
 button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+button.secondary-btn {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+button.secondary-btn:hover {
+  opacity: 0.9;
 }
 
 /* Step4小見出し */
@@ -170,9 +207,9 @@ button:disabled {
   border-radius: 999px;
   padding: 10px 14px;
   font-size: 1rem;
-  background: #fff;
+  background: rgba(var(--calendar-base-rgb), var(--paper-alpha));
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--calendar-border);
 }
 
 .symbol-btn.active {
@@ -183,10 +220,16 @@ button:disabled {
 /* カレンダー全体 */
 #calendarImageArea {
   margin-top: 12px;
-  background: #fff;
+  background-image: linear-gradient(rgba(var(--calendar-base-rgb), var(--paper-alpha)), rgba(var(--calendar-base-rgb), var(--paper-alpha))), var(--calendar-bg-image);
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
   border-radius: 12px;
   padding: 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--calendar-border);
+  box-shadow: 0 10px 24px var(--calendar-shadow);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 /* カレンダータイトル */
@@ -214,7 +257,7 @@ button:disabled {
 .weekday-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--calendar-border);
 }
 
 .weekday-header div {
@@ -228,20 +271,20 @@ button:disabled {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border-left: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--calendar-border);
+  border-bottom: 1px solid var(--calendar-border);
 }
 
 /* 日セル */
 .day-cell {
   min-height: 48px;
-  border-right: 1px solid var(--border);
-  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--calendar-border);
+  border-top: 1px solid var(--calendar-border);
   padding: 2px 3px;
   box-sizing: border-box;
   position: relative;
   font-size: 0.8rem;
-  background: #fff;
+  background: rgba(var(--calendar-base-rgb), var(--paper-alpha));
 }
 
 /* 日付数字 */
@@ -261,8 +304,8 @@ button:disabled {
 
 /* 期間外のグレーアウト */
 .day-cell.day-disabled {
-  background: #f3f4f7;
-  color: #c0c4d0;
+  background: var(--calendar-muted);
+  color: #8b8f99;
 }
 
 /* 記号部分（2×2グリッド） */
@@ -300,6 +343,7 @@ button:disabled {
   border-radius: 999px;
   background: var(--accent); /* テーマに応じて変化 */
   opacity: 0.7;
+  border: 1px solid var(--calendar-border);
 }
 
 .legend-symbol {
@@ -317,9 +361,10 @@ button:disabled {
   font-size: 0.8rem;
   padding: 6px 8px;
   border-radius: 6px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--calendar-border);
   resize: none;
   box-sizing: border-box;
+  background: rgba(var(--calendar-base-rgb), var(--paper-alpha));
 }
 
 /* 出力画像 */

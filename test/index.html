@@ -74,6 +74,16 @@
         <option value="warm">暖色系（オレンジ＆ベージュ）</option>
       </select>
 
+      <label>背景画像（任意）</label>
+      <div class="bg-input-row">
+        <input id="backgroundImageInput" type="file" accept="image/*" />
+        <button id="clearBackgroundBtn" type="button" class="secondary-btn">背景をクリア</button>
+      </div>
+      <p class="hint small">アップロードした画像は端末内でのみ利用され、保存されません。</p>
+
+      <label for="paperAlpha">下地の透明度：<span id="paperAlphaValue">92%</span></label>
+      <input id="paperAlpha" type="range" min="0.88" max="0.98" step="0.01" value="0.92" />
+
       <label>表示形式</label>
       <select id="layoutMode">
         <option value="month">月ごとに分ける</option>

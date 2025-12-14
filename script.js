@@ -14,6 +14,23 @@ const STORAGE_KEY = "calendarGeneratorState";
 const DEFAULT_PAPER_ALPHA = 0.92;
 
 // ------------------------------------------------------
+// 共有フッター読込
+// ------------------------------------------------------
+function loadSharedFooter() {
+  const footerEl = document.getElementById("sharedFooter");
+  if (!footerEl) return;
+
+  fetch("https://cleverkitjp.github.io/footer.html")
+    .then((res) => res.text())
+    .then((html) => {
+      footerEl.innerHTML = html;
+    })
+    .catch(() => {
+      footerEl.innerHTML = `<a class="footer-link" href="https://cleverkitjp.github.io/footer.html">フッターを表示</a>`;
+    });
+}
+
+// ------------------------------------------------------
 // 祝日データ取得
 // ------------------------------------------------------
 async function loadHolidays() {
@@ -691,6 +708,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  loadSharedFooter();
   applyTheme();
   updatePaperAlpha(paperAlphaEl ? paperAlphaEl.value : DEFAULT_PAPER_ALPHA);
   createSymbolButtons();

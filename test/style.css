@@ -7,10 +7,11 @@
 
   --calendar-base-rgb: 255, 255, 255;
   --calendar-border: rgba(0, 0, 0, 0.08);
-  --calendar-muted: rgba(230, 234, 241, 0.9);
+  --calendar-muted: rgba(236, 238, 241, 0.9);
   --calendar-shadow: rgba(0, 0, 0, 0.05);
   --calendar-bg-image: none;
-  --paper-alpha: 0.92;
+  --paper-alpha-frame: 0.92;
+  --paper-alpha-cell: 0.96;
 
   --primary-cool: #4a90e2;
   --accent-cool: #e6f2ff;
@@ -26,18 +27,18 @@
 body.theme-cool {
   --primary: var(--primary-cool);
   --accent: var(--accent-cool);
-  --calendar-base-rgb: 240, 246, 255;
+  --calendar-base-rgb: 255, 255, 255;
   --calendar-border: rgba(74, 144, 226, 0.2);
-  --calendar-muted: rgba(223, 233, 246, 0.9);
+  --calendar-muted: rgba(237, 242, 248, 0.92);
   --calendar-shadow: rgba(74, 144, 226, 0.12);
 }
 
 body.theme-warm {
   --primary: var(--primary-warm);
   --accent: var(--accent-warm);
-  --calendar-base-rgb: 252, 245, 236;
+  --calendar-base-rgb: 255, 255, 255;
   --calendar-border: rgba(210, 170, 120, 0.25);
-  --calendar-muted: rgba(243, 231, 214, 0.9);
+  --calendar-muted: rgba(244, 238, 228, 0.92);
   --calendar-shadow: rgba(201, 156, 107, 0.12);
 }
 
@@ -207,7 +208,7 @@ button.secondary-btn:hover {
   border-radius: 999px;
   padding: 10px 14px;
   font-size: 1rem;
-  background: rgba(var(--calendar-base-rgb), var(--paper-alpha));
+  background: rgba(var(--calendar-base-rgb), var(--paper-alpha-frame));
   color: var(--text);
   border: 1px solid var(--calendar-border);
 }
@@ -220,7 +221,7 @@ button.secondary-btn:hover {
 /* カレンダー全体 */
 #calendarImageArea {
   margin-top: 12px;
-  background-image: linear-gradient(rgba(var(--calendar-base-rgb), var(--paper-alpha)), rgba(var(--calendar-base-rgb), var(--paper-alpha))), var(--calendar-bg-image);
+  background-image: linear-gradient(rgba(var(--calendar-base-rgb), var(--paper-alpha-frame)), rgba(var(--calendar-base-rgb), var(--paper-alpha-frame))), var(--calendar-bg-image);
   background-size: cover, cover;
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
@@ -284,7 +285,7 @@ button.secondary-btn:hover {
   box-sizing: border-box;
   position: relative;
   font-size: 0.8rem;
-  background: rgba(var(--calendar-base-rgb), var(--paper-alpha));
+  background: rgba(var(--calendar-base-rgb), var(--paper-alpha-cell));
 }
 
 /* 日付数字 */
@@ -329,6 +330,10 @@ button.secondary-btn:hover {
   font-size: 0.8rem;
 }
 
+.paper-alpha-control {
+  margin-top: 12px;
+}
+
 .legend-row {
   display: flex;
   flex-wrap: wrap;
@@ -364,7 +369,7 @@ button.secondary-btn:hover {
   border: 1px solid var(--calendar-border);
   resize: none;
   box-sizing: border-box;
-  background: rgba(var(--calendar-base-rgb), var(--paper-alpha));
+  background: rgba(var(--calendar-base-rgb), var(--paper-alpha-frame));
 }
 
 /* 出力画像 */

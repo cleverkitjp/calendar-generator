@@ -41,12 +41,14 @@ function applyTheme() {
 // 下地透明度の反映
 // ------------------------------------------------------
 function updatePaperAlpha(alphaValue) {
-  const alpha = Math.min(0.98, Math.max(0.88, Number(alphaValue) || DEFAULT_PAPER_ALPHA));
+  const alpha = Math.min(1, Math.max(0.6, Number(alphaValue) || DEFAULT_PAPER_ALPHA));
+  const cellAlpha = Math.min(1, alpha + 0.04);
   const label = document.getElementById("paperAlphaValue");
   const slider = document.getElementById("paperAlpha");
   if (slider) slider.value = alpha.toFixed(2);
   if (label) label.textContent = `${Math.round(alpha * 100)}%`;
-  document.documentElement.style.setProperty("--paper-alpha", alpha);
+  document.documentElement.style.setProperty("--paper-alpha-frame", alpha);
+  document.documentElement.style.setProperty("--paper-alpha-cell", cellAlpha);
 }
 
 // ------------------------------------------------------

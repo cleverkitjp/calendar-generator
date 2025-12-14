@@ -81,9 +81,6 @@
       </div>
       <p class="hint small">アップロードした画像は端末内でのみ利用され、保存されません。</p>
 
-      <label for="paperAlpha">下地の透明度：<span id="paperAlphaValue">92%</span></label>
-      <input id="paperAlpha" type="range" min="0.88" max="0.98" step="0.01" value="0.92" />
-
       <label>表示形式</label>
       <select id="layoutMode">
         <option value="month">月ごとに分ける</option>
@@ -150,6 +147,11 @@
             placeholder="例）12/28〜1/5は年末年始休業です。&#10;例）★のイベントは事前予約制です。"
           ></textarea>
         </div>
+      </div>
+
+      <div class="paper-alpha-control">
+        <label for="paperAlpha">下地の透明度：<span id="paperAlphaValue">92%</span></label>
+        <input id="paperAlpha" type="range" min="0.6" max="1" step="0.01" value="0.92" />
       </div>
     </section>
 

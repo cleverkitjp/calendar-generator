@@ -11,6 +11,24 @@ let appliedSymbols = {}; // {"2025-03-20": "●▲" など}
 
 // ローカル保存キー
 const STORAGE_KEY = "calendarGeneratorState";
+const DEFAULT_PAPER_ALPHA = 0.92;
+
+// ------------------------------------------------------
+// 共有フッター読込
+// ------------------------------------------------------
+function loadSharedFooter() {
+  const footerEl = document.getElementById("sharedFooter");
+  if (!footerEl) return;
+
+  fetch("https://cleverkitjp.github.io/footer.html")
+    .then((res) => res.text())
+    .then((html) => {
+      footerEl.innerHTML = html;
+    })
+    .catch(() => {
+      footerEl.innerHTML = `<a class="footer-link" href="https://cleverkitjp.github.io/footer.html">フッターを表示</a>`;
+    });
+}
 
 // ------------------------------------------------------
 // 祝日データ取得
@@ -37,6 +55,33 @@ function applyTheme() {
 }
 
 // ------------------------------------------------------
+// 下地透明度の反映
+// ------------------------------------------------------
+function updatePaperAlpha(alphaValue) {
+  const alpha = Math.min(1, Math.max(0.6, Number(alphaValue) || DEFAULT_PAPER_ALPHA));
+  const cellAlpha = Math.min(1, alpha + 0.04);
+  const label = document.getElementById("paperAlphaValue");
+  const slider = document.getElementById("paperAlpha");
+  if (slider) slider.value = alpha.toFixed(2);
+  if (label) label.textContent = `${Math.round(alpha * 100)}%`;
+  document.documentElement.style.setProperty("--paper-alpha-frame", alpha);
+  document.documentElement.style.setProperty("--paper-alpha-cell", cellAlpha);
+}
+
+// ------------------------------------------------------
+// 背景画像の適用/解除
+// ------------------------------------------------------
+function setBackgroundImage(dataUrl) {
+  const area = document.getElementById("calendarImageArea");
+  if (!area) return;
+  if (dataUrl) {
+    area.style.setProperty("--calendar-bg-image", `url(${dataUrl})`);
+  } else {
+    area.style.setProperty("--calendar-bg-image", "none");
+  }
+}
+
+// ------------------------------------------------------
 // 現在の状態を localStorage に保存
 // ------------------------------------------------------
 function saveState() {
@@ -48,6 +93,7 @@ function saveState() {
     const themeSelect  = document.getElementById("themeSelect");
     const layoutModeSel= document.getElementById("layoutMode");
     const memoEl       = document.getElementById("memoText");
+    const paperAlphaEl = document.getElementById("paperAlpha");
 
     const symbols = [];
     for (let i = 1; i <= 4; i++) {
@@ -68,6 +114,7 @@ function saveState() {
       layoutMode: layoutModeSel? (layoutModeSel.value|| "month"): "month",
       symbols,
       memo:       memoEl       ? (memoEl.value       || "") : "",
+      paperAlpha: paperAlphaEl ? (paperAlphaEl.value || DEFAULT_PAPER_ALPHA) : DEFAULT_PAPER_ALPHA,
       appliedSymbols
     };
 
@@ -97,6 +144,7 @@ function restoreState() {
     const themeSelect  = document.getElementById("themeSelect");
     const layoutModeSel= document.getElementById("layoutMode");
     const memoEl       = document.getElementById("memoText");
+    const paperAlphaEl = document.getElementById("paperAlpha");
 
     if (titleInput)   titleInput.value   = state.title      || "";
     if (startInput)   startInput.value   = state.startDate  || "";
@@ -105,6 +153,7 @@ function restoreState() {
     if (themeSelect)  themeSelect.value  = state.theme      || "cool";
     if (layoutModeSel)layoutModeSel.value= state.layoutMode || "month";
     if (memoEl)       memoEl.value       = state.memo       || "";
+    if (paperAlphaEl) paperAlphaEl.value = state.paperAlpha || DEFAULT_PAPER_ALPHA;
 
     // 記号とラベル
     if (Array.isArray(state.symbols)) {
@@ -121,6 +170,7 @@ function restoreState() {
     appliedSymbols = state.appliedSymbols || {};
 
     applyTheme();
+    updatePaperAlpha(state.paperAlpha || DEFAULT_PAPER_ALPHA);
     autoResizeMemo();
     createSymbolButtons();
     generateCalendar(); // appliedSymbols を見ながら描画
@@ -623,6 +673,9 @@ window.addEventListener("DOMContentLoaded", () => {
   const themeSelect = document.getElementById("themeSelect");
   const memoEl      = document.getElementById("memoText");
   const restoreBtn  = document.getElementById("restoreBtn");
+  const paperAlphaEl= document.getElementById("paperAlpha");
+  const bgInput     = document.getElementById("backgroundImageInput");
+  const clearBgBtn  = document.getElementById("clearBackgroundBtn");
 
   if (genBtn)     genBtn.addEventListener("click", generateCalendar);
   if (makeImgBtn) makeImgBtn.addEventListener("click", makeImage);
@@ -630,8 +683,34 @@ window.addEventListener("DOMContentLoaded", () => {
   if (themeSelect) themeSelect.addEventListener("change", () => { applyTheme(); saveState(); });
   if (memoEl)     memoEl.addEventListener("input", () => { autoResizeMemo(); saveState(); });
   if (restoreBtn) restoreBtn.addEventListener("click", restoreState);
+  if (paperAlphaEl) {
+    paperAlphaEl.addEventListener("input", (e) => {
+      updatePaperAlpha(e.target.value);
+      saveState();
+    });
+  }
+  if (bgInput) {
+    bgInput.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setBackgroundImage(ev.target?.result || "");
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  if (clearBgBtn) {
+    clearBgBtn.addEventListener("click", () => {
+      const input = document.getElementById("backgroundImageInput");
+      if (input) input.value = "";
+      setBackgroundImage(null);
+    });
+  }
 
+  loadSharedFooter();
   applyTheme();
+  updatePaperAlpha(paperAlphaEl ? paperAlphaEl.value : DEFAULT_PAPER_ALPHA);
   createSymbolButtons();
   autoResizeMemo();
 });

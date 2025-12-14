@@ -74,12 +74,19 @@
         <option value="warm">暖色系（オレンジ＆ベージュ）</option>
       </select>
 
+      <label>背景画像（任意）</label>
+      <div class="bg-input-row">
+        <input id="backgroundImageInput" type="file" accept="image/*" />
+        <button id="clearBackgroundBtn" type="button" class="secondary-btn">背景をクリア</button>
+      </div>
+      <p class="hint small">アップロードした画像は端末内でのみ利用され、保存されません。</p>
+
       <label>表示形式</label>
       <select id="layoutMode">
         <option value="month">月ごとに分ける</option>
         <option value="continuous">連続したカレンダー</option>
       </select>
-    </section>
+      </section>
 
     <!-- Step2 予定の種類（記号設定） -->
     <section class="card">
@@ -141,6 +148,9 @@
           ></textarea>
         </div>
       </div>
+
+      <label for="paperAlpha">下地の透明度：<span id="paperAlphaValue">92%</span></label>
+      <input id="paperAlpha" type="range" min="0.6" max="1" step="0.01" value="0.92" />
     </section>
 
     <!-- Step5 画像出力 -->
@@ -152,12 +162,8 @@
       <p class="hint small">画像を長押しで保存もできます。</p>
     </section>
 
-  </div>
-<footer>
-  <p class="back-to-top">
-   <a href="https://cleverkitjp.github.io/">cleverkitjp トップページへ戻る</a>
-  </p>
-</footer>
+</div>
+<div class="shared-footer" id="sharedFooter" aria-live="polite"></div>
   <script src="script.js"></script>
 </body>
 </html>

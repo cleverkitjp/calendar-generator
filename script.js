@@ -14,6 +14,16 @@ const STORAGE_KEY = "calendarGeneratorState";
 const DEFAULT_PAPER_ALPHA = 0.92;
 
 // ------------------------------------------------------
+// ローカルタイムゾーンの日付キー（YYYY-MM-DD）を生成
+// ------------------------------------------------------
+function formatDateKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+// ------------------------------------------------------
 // 共有フッター読込
 // ------------------------------------------------------
 function loadSharedFooter() {
@@ -330,7 +340,7 @@ function renderMonthLayout(startDate, endDate, weekStart, area) {
 
       const day = i - offset + 1;
       const curDate = new Date(y, m, day);
-      const dateKey = curDate.toISOString().slice(0, 10);
+      const dateKey = formatDateKey(curDate);
 
       const dayNumber = document.createElement("div");
       dayNumber.textContent = day;
@@ -381,7 +391,7 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
 
   const title = document.createElement("div");
   title.className = "month-title";
-  title.textContent = `${startDate.toISOString().slice(0, 10)} 〜 ${endDate.toISOString().slice(0, 10)}`;
+  title.textContent = `${formatDateKey(startDate)} 〜 ${formatDateKey(endDate)}`;
   block.appendChild(title);
 
   const weekdayHeader = createWeekdayHeader(weekStart);
@@ -390,7 +400,7 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
   const grid = document.createElement("div");
   grid.className = "calendar-grid";
 
-  const startKey = startDate.toISOString().slice(0, 10);
+  const startKey = formatDateKey(startDate);
 
   const first = new Date(startDate);
   const nativeDowStart = first.getDay();
@@ -414,7 +424,7 @@ function renderContinuousLayout(startDate, endDate, weekStart, area) {
     const cell = document.createElement("div");
     cell.className = "day-cell";
 
-    const dateKey = cur.toISOString().slice(0, 10);
+    const dateKey = formatDateKey(cur);
     const dow       = cur.getDay();
     const isSat     = (dow === 6);
     const isSun     = (dow === 0);

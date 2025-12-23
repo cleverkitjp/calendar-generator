@@ -12,6 +12,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9727255179923866" crossorigin="anonymous"></script>
   <title>カレンダー生成｜営業日・予定カレンダーをかんたん作成＆SNSシェア</title>
+  <link rel="stylesheet" href="https://cleverkitjp.github.io/common.css">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F6517NYNFF"></script>
 <script>
@@ -178,7 +179,21 @@
     </section>
 
 </div>
-<div class="shared-footer" id="sharedFooter" aria-live="polite"></div>
   <script src="script.js"></script>
+  <div id="ck-footer-container"></div>
+  <script>
+    (function() {
+      var container = document.getElementById('ck-footer-container');
+      if (!container) return;
+
+      fetch('https://cleverkitjp.github.io/footer.html')
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+          container.innerHTML = html;
+          try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+        })
+        .catch(function(e) {});
+    })();
+  </script>
 </body>
 </html>
